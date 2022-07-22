@@ -1,3 +1,4 @@
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 public class Board {
@@ -9,21 +10,17 @@ public class Board {
     }
 
     public Piece getPiece(Location location) {
-        return board[location.y][location.x];
+        return board[location.y()][location.x()];
     }
 
     public void setPiece(@NotNull Location location, @NotNull Piece piece) {
-        if(board[location.y][location.x] != null) {
-            throw new RuntimeException("Programming Error. Placing piece into already occupied Location");
-        }
-        board[location.y][location.x] = piece;
+        Preconditions.checkArgument(board[location.y()][location.x()] == null, "Programming Error. Placing piece into already occupied Location");
+        board[location.y()][location.x()] = piece;
     }
 
     public void removePiece(@NotNull Location location) {
-        if(board[location.y][location.x] == null) {
-            throw new RuntimeException("Programming Error. Removing non-existing Piece");
-        }
-        board[location.y][location.x] = null;
+        Preconditions.checkArgument(board[location.y()][location.x()] != null, "Programming Error. Removing non-existing Piece");
+        board[location.y()][location.x()] = null;
 
     }
 

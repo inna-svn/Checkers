@@ -1,11 +1,14 @@
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CheckersGame implements Game {
 
     User activeUser, inactiveUser;
-    Board b = new Board();
+    Board board = new Board();
 
     @Override
     public void start(@NotNull User user1, @NotNull User user2) {
@@ -19,7 +22,8 @@ public class CheckersGame implements Game {
     }
 
     @Override
-    public List<Move> listPossibleMoves() {
+    public Map<Piece, List<Move>> listPossibleMoves() {
+        Preconditions.checkState(status == Status.IN_PROGRESS);
         return null;
     }
 
@@ -27,4 +31,5 @@ public class CheckersGame implements Game {
     public void makeMove(@NotNull Move move) {
 
     }
+
 }

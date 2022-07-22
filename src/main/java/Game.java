@@ -1,6 +1,8 @@
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Game {
     enum Status {
@@ -15,7 +17,7 @@ public interface Game {
 
     User getActiveUser(); // Whose turn is it?
 
-    List<Move> listPossibleMoves();
+    Map<Piece, List<Move>> listPossibleMoves();
 
     void makeMove(@NotNull Move move);
 
@@ -24,9 +26,8 @@ public interface Game {
     }
 
     default User getWinner() {
-        if (status == Status.IN_PROGRESS) {
-            throw new RuntimeException("Programming Error. getWinner() called on IN_PROGRESS Game.");
-        }
+        Preconditions.checkState(status == Status.IN_PROGRESS, "getWinner() should only be called on IN_PROGRESS Game");
         return winner;
     }
+
 }
