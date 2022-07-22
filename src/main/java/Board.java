@@ -9,7 +9,7 @@ public class Board {
         this.board = new Piece[SIZE][SIZE];
     }
 
-    public Piece getPiece(Location location) {
+    public Piece getPiece(@NotNull Location location) {
         return board[location.y()][location.x()];
     }
 
