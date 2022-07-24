@@ -1,8 +1,4 @@
 import java.util.List;
 
 // Was not in project plan
-public class Move {
-    Location startLocation;
-    Location endLocation;
-    List<Location> intermediateLocations;
-}
+public record Move(Location start, Location end, List<Location> intermediates) { }

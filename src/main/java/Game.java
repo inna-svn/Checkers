@@ -1,6 +1,8 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -10,12 +12,22 @@ public interface Game {
         WON
     }
 
+    enum Outcome {
+        WON,
+        LOST,
+        ABANDONED
+    }
+
     Status status = Status.IN_PROGRESS;
     User winner = null;
 
     void start(@NotNull User user1, @NotNull User user2);
 
     User getActiveUser(); // Whose turn is it?
+
+    default void abandon(User user) {
+        // TODO
+    }
 
     Map<Piece, List<Move>> listPossibleMoves();
 
@@ -29,5 +41,13 @@ public interface Game {
         Preconditions.checkState(status == Status.IN_PROGRESS, "getWinner() should only be called on IN_PROGRESS Game");
         return winner;
     }
+
+    static List<Class<? extends Game>> allGamesClasses() {
+        return new ArrayList<>(Arrays.asList(
+                CheckersGame.class
+                // Add new classes here
+        ));
+    }
+
 
 }
