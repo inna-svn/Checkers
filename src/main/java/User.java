@@ -1,12 +1,11 @@
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class User {
 
-    Map<Class<? extends Game>, UserScore> scores = new HashMap<>(); // TODO: Load from DB?
+    Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Map<Class<? extends Game>, Lobby> inLobbies = new HashMap<>();
 
@@ -57,8 +56,8 @@ public class User {
         abandonActiveGame();
     }
 
-    UserScore scoreForGame(Class<? extends Game> gameClass, Game.Outcome outcome) {
-        return scores.computeIfAbsent(gameClass, c -> new UserScore(this, gameClass, 0, 0, 0.0F));
+    UserGameScore scoreForGame(Class<? extends Game> gameClass, Game.Outcome outcome) {
+        return scores.computeIfAbsent(gameClass, c -> new UserGameScore(this, gameClass, 0, 0, 0.0F));
     }
 
 }

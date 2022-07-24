@@ -1,16 +1,13 @@
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
-public final class UserScore {
+public final class UserGameScore {
     private final User user;
     private final Class<? extends Game> gameClass;
     private int gamesNum;
     private int winsNum;
     private float rate;
 
-    public UserScore(@NotNull User user, @NotNull Class<? extends Game> gameClass, int gamesNum, int winsNum, float rate) {
+    public UserGameScore(@NotNull User user, @NotNull Class<? extends Game> gameClass, int gamesNum, int winsNum, float rate) {
         this.user = user;
         this.gameClass = gameClass;
         this.gamesNum = gamesNum;
