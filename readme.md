@@ -1,5 +1,10 @@
 # Checkers
 
+## To Do
+
+* Persistence
+* Web UI
+
 ## Decisions
 
 * Simplistic approach of abandoned games - don't include in scores

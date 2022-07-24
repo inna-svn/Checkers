@@ -4,11 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class CheckersPiece implements Piece {
 
-    enum Color {
-        WHITE,
-        BLACK
-    }
-
     protected Board board;
 
     protected Color color;

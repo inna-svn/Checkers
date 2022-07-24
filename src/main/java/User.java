@@ -24,6 +24,8 @@ public class User {
     static User signUp(@NotNull String username, @NotNull String password) throws SignUpError {
 //        throw new SignUpError("User with the given username already exists");
 //        throw new SignUpError("Password is too short");
+        // TODO: Also log the user in
+        // TODO: Store to DB
         return new User();
     }
 
@@ -57,6 +59,7 @@ public class User {
     }
 
     UserGameScore scoreForGame(Class<? extends Game> gameClass, Game.Outcome outcome) {
+        // TODO: Check in database first
         return scores.computeIfAbsent(gameClass, c -> new UserGameScore(this, gameClass, 0, 0, 0.0F));
     }
 

@@ -9,9 +9,10 @@ import java.util.Map;
 public interface Game {
     enum Status {
         IN_PROGRESS,
-        WON
+        FINISHED
     }
 
+    // Not OK
     enum Outcome {
         WON,
         LOST,
@@ -31,14 +32,14 @@ public interface Game {
 
     Map<Piece, List<Move>> listPossibleMoves();
 
-    void makeMove(@NotNull Move move);
+    void makeMove(@NotNull User user, @NotNull Move move);
 
     default Status getStatus() {
         return status;
     }
 
     default User getWinner() {
-        Preconditions.checkState(status == Status.IN_PROGRESS, "getWinner() should only be called on IN_PROGRESS Game");
+        Preconditions.checkState(status == Status.FINISHED, "getWinner() should only be called on IN_PROGRESS Game");
         return winner;
     }
 

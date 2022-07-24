@@ -7,9 +7,16 @@ import java.util.Map;
 
 public class GameUI {
 
+    void signUp(String username, String password) throws User.SignUpError {
+        User user = User.signUp(username, password);
+        // TODO: Check if any lobby has enough players to start
+        //       The lobby where u joined might be ready.
+        //       Then startGame()
+    }
+
     void signIn(String username, String password) throws User.SignInError {
         // Note: auto-joins lobby
-        User u = User.signIn(username, password);
+        User user = User.signIn(username, password);
         // TODO: Check if any lobby has enough players to start
         //       The lobby where u joined might be ready.
         //       Then startGame()
