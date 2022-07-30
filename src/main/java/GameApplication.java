@@ -1,30 +1,17 @@
 import com.google.common.base.Preconditions;
+import jakarta.annotation.ManagedBean;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GameUI {
-
-    void signUp(String username, String password) throws User.SignUpError {
-        User user = User.signUp(username, password);
-        // TODO: Check if any lobby has enough players to start
-        //       The lobby where u joined might be ready.
-        //       Then startGame()
-    }
-
-    void signIn(String username, String password) throws User.SignInError {
-        // Note: auto-joins lobby
-        User user = User.signIn(username, password);
-        // TODO: Check if any lobby has enough players to start
-        //       The lobby where u joined might be ready.
-        //       Then startGame()
-    }
-
-    void signOut(User user) {
-        user.signOut();
-    }
+@ApplicationScoped
+@ManagedBean
+@Named
+public class GameApplication {
 
     // Very not sure
     void startGame(Class<? extends Game> gameClass, Lobby lobby) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
