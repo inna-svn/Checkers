@@ -27,7 +27,7 @@ How to install - whatever works for your platform.
 
 Info: Based on https://tomee.apache.org/master/docs/tomee-maven-plugin.html
 
-    mvn tomee:build
+    mvn package tomee:build
 
 ### Configure IDEA
 
