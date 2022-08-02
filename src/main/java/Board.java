@@ -16,6 +16,7 @@ public class Board {
     public void setPiece(@NotNull Location location, @NotNull Piece piece) {
         Preconditions.checkArgument(board[location.y()][location.x()] == null, "Programming Error. Placing piece into already occupied Location");
         board[location.y()][location.x()] = piece;
+
     }
 
     public void removePiece(@NotNull Location location) {
