@@ -34,7 +34,7 @@ public class UserSession implements Serializable {
         return errorMessage;
     }
 
-    public boolean isLoggedIn() {
+    public boolean isSignedIn() {
         return user != null;
     }
 

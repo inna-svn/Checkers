@@ -10,10 +10,10 @@
 </h:head>
 <h:body>
     Welcome to Checkers!
-    <h:outputText rendered="#{!userSession.loggedIn}">
-        <h:link outcome="signin.xhtml">Please log in</h:link>
+    <h:outputText rendered="#{!userSession.signedIn}">
+        <h:link outcome="signin.xhtml">Please sign in</h:link>
     </h:outputText>
-    <h:outputText rendered="#{userSession.loggedIn}">
+    <h:outputText rendered="#{userSession.signedIn}">
         You are logged in, #{userSession.username}<br/>
         <h:form id="signout">
             <h:commandButton value="Sign Out" action="#{userSession.signOut}"/>

@@ -9,7 +9,7 @@
     <title><ui:insert name="title">Sign In - Checkers</ui:insert></title>
 </h:head>
 <h:body>
-    <h:form id="signin" rendered="#{!userSession.loggedIn}">
+    <h:form id="signin" rendered="#{!userSession.signedIn}">
         <h:panelGrid columns="2">
             <h:outputLabel for="username">Username:</h:outputLabel>
             <h:inputText id="username" value="#{userSession.username}"/>
@@ -20,7 +20,7 @@
     </h:form>
     <h:outputText id="message" rendered="#{userSession.errorMessage != null}">#{userSession.errorMessage}</h:outputText>
 
-    <h:outputText rendered="#{userSession.loggedIn}">
+    <h:outputText rendered="#{userSession.signedIn}">
         You are logged in, please proceed to
         <h:link outcome="index.html">the main page</h:link>
     </h:outputText>
