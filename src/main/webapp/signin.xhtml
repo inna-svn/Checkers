@@ -6,19 +6,24 @@
       xmlns:h="http://java.sun.com/jsf/html">
 <h:head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title><ui:insert name="title">Default Title</ui:insert></title>
+    <title><ui:insert name="title">Sign In - Checkers</ui:insert></title>
 </h:head>
 <h:body>
-    <h:form id="login" rendered="#{!userSession.loggedIn}">
+    <h:form id="signin" rendered="#{!userSession.loggedIn}">
         <h:panelGrid columns="2">
             <h:outputLabel for="username">Username:</h:outputLabel>
             <h:inputText id="username" value="#{userSession.username}"/>
             <h:outputLabel for="password">Password:</h:outputLabel>
             <h:inputSecret id="password" value="#{userSession.password}"/>
-            <h:outputText id="message" rendered="#{userSession.errorMessage}">#{userSession.errorMessage}</h:outputText>
         </h:panelGrid>
-        <h:commandButton value="UserSession" action="#{userSession.signIn}"/>
+        <h:commandButton value="Sign In" action="#{userSession.signIn}"/>
     </h:form>
+    <h:outputText id="message" rendered="#{userSession.errorMessage != null}">#{userSession.errorMessage}</h:outputText>
+
+    <h:outputText rendered="#{userSession.loggedIn}">
+        You are logged in, please proceed to
+        <h:link outcome="index.html">the main page</h:link>
+    </h:outputText>
 
 </h:body>
 </html>
