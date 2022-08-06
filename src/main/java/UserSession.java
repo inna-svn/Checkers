@@ -58,16 +58,17 @@ public class UserSession implements Serializable {
         errorMessage = null;
         try {
             user = User.signIn(username, password);
-            return "index.html?faces-redirect=true";
+            return "home.html?faces-redirect=true";
         } catch (User.SignInError e) {
             errorMessage = e.getMessage();
         }
         return null;
     }
 
-    public void signOut() {
+    public String signOut() {
         user.signOut();
         user = null;
+        return "index.html?faces-redirect=true";
     }
 
 }
