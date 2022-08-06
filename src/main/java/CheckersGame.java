@@ -6,6 +6,8 @@ import java.util.Map;
 
 public class CheckersGame implements Game {
 
+    static public final String NAME = "Checkers";
+
     User activeUser, inactiveUser;
     Board board = new Board();
 

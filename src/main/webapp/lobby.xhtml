@@ -13,18 +13,19 @@
     <h:form id="signout">
         <h:commandButton value="Sign Out" action="#{userSession.signOut}"/>
     </h:form>
-    <br/>
-    <h2>Join one of the Lobbies</h2>
+    <!-- TODO: display appropriate message of not in lobby (userSession.lobby == null) -->
+    <!-- TODO: only display if in lobby (userSession.lobby != null) -->
+    <h1>Lobby - #{userSession.lobby.gameName}</h1>
+
+    <h:link outcome="home.xhtml">Home</h:link>
+
+    <h2>Users in the lobby</h2>
     <ul>
-        <ui:repeat value="#{userSession.availableLobbies}" var="lobby">
+        <ui:repeat value="#{userSession.lobby.users}" var="user">
             <li>
-                <h:form>
-                    <!-- TODO: style it as a link -->
-                    <h:commandButton value="#{lobby.gameName} - #{lobby.users.size()} user(s)" action="#{userSession.joinLobby(lobby)}"/>
-                </h:form>
+                #{user.username} <h:outputText rendered="#{user == userSession.user}">(you)</h:outputText>
             </li>
         </ui:repeat>
     </ul>
-    <!--    <h:link outcome="lobby.html"></h:link>-->
 </h:body>
 </html>

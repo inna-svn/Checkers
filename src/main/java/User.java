@@ -1,16 +1,25 @@
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class User {
 
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
-    Map<Class<? extends Game>, Lobby> inLobbies = new HashMap<>();
+    Set<Lobby> lobbies = new HashSet<>();
+    private final String username;
 
-    static User testUser1 = new User();
-    static User testUser2 = new User();
+    static User testUser1 = new User("test1");
+    static User testUser2 = new User("test2");
+
+    public User(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
     static class SignUpError extends Exception {
         public SignUpError(String message) {
@@ -29,7 +38,7 @@ public class User {
 //        throw new SignUpError("Password is too short");
         // TODO: Also log the user in
         // TODO: Store to DB
-        return new User();
+        return new User(username);
     }
 
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
@@ -44,19 +53,12 @@ public class User {
         if (user == null) {
             throw new SignInError("User not found or password does not match");
         }
-        user.joinTheOnlyLobby();
         return user;
     }
 
-    void joinLobby(Class<? extends Game> aClass) {
-        Lobby.forGame(aClass).addUser(this);
-        // TODO: Also update inLobbies
-    }
-
-    void joinTheOnlyLobby() {
-        // TODO: make it idempotent operation
-        // Auto-join Lobby if there is only one
-//        Preconditions.checkState(???.size() == 1, "Change here when supporting more than one Game");
+    void joinLobby(@NotNull Lobby lobby) {
+        lobby.addUser(this);
+        lobbies.add(lobby);
     }
 
     void abandonActiveGame() {
@@ -67,13 +69,25 @@ public class User {
     }
 
     void signOut() {
-        inLobbies.forEach((aClass, lobby) -> lobby.removeUser(this));
+        lobbies.forEach((lobby) -> lobby.removeUser(this));
         abandonActiveGame();
     }
 
     UserGameScore scoreForGame(Class<? extends Game> gameClass, Game.Outcome outcome) {
         // TODO: Check in database first
         return scores.computeIfAbsent(gameClass, c -> new UserGameScore(this, gameClass, 0, 0, 0.0F));
+    }
+
+    /**
+     * @return all lobbies that the user can join, there are no restrictions currently
+     */
+    public Collection<Lobby> getAvailableLobbies() {
+        return Lobby.lobbies;
+    }
+
+    public Lobby getLobby() {
+        Preconditions.checkState(lobbies.size() <= 1, "Programming error. Update when multiple lobbies are supported");
+        return lobbies.stream().findFirst().orElse(null);
     }
 
 }
