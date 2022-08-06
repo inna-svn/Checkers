@@ -1,5 +1,6 @@
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,66 +12,106 @@ public class CheckersKingPiece extends CheckersPiece {
     @Override
     public List<Move> listPossibleMoves() {
         List<Move> moves = new ArrayList<Move>();
+        int colorMod = this.color == Color.WHITE ? 1 : -1;
 
-
-        if (isNextCellEmpty(1, 1)){
-            moves.add(new Move(this.location, new Location(this.location.getX() + 1, this.location.getY() + 1), null));
+        // Check down right
+        if (location.x() != 7 && location.y() != 7 && isCellEmpty(this.location, 1, 1)){
+            moves.add(new Move(this.location, new Location(this.location.x() + 1, this.location.y() + 1), null));
         }
-        else if (isAbleToCapture(2, 2)){
-            moves.add(new Move(this.location, new Location(this.location.getX() + 2, this.location.getY() + 2),
-                      new Location(this.location.getX() + 1, this.location.getY() + 1)));
+        if (location.x() != 7 && location.y() != 0 && isCellEmpty(this.location,1, -1)){
+            moves.add(new Move(this.location, new Location(this.location.x() + 1, this.location.y() - 1), null));
         }
-
-        if (isNextCellEmpty(1, -1)){
-            moves.add(new Move(this.location, new Location(this.location.getX() + 1, this.location.getY() - 1), null));
+        if (location.x() != 0 && location.y() != 7 && isCellEmpty(this.location,-1, 1)){
+            moves.add(new Move(this.location, new Location(this.location.x() - 1, this.location.y() + 1), null));
         }
-        else if (isAbleToCapture(2, -2)){
-            moves.add(new Move(this.location, new Location(this.location.getX() + 2, this.location.getY() - 2),
-                      new Location(this.location.getX() + 1, this.location.getY() - 1)));
+        if (location.x() != 0 && location.y() != 0 && isCellEmpty(this.location,-1, -1)){
+            moves.add(new Move(this.location, new Location(this.location.x() - 1, this.location.y() - 1), null));
         }
 
-        if (isNextCellEmpty(-1, 1)){
-            moves.add(new Move(this.location, new Location(this.location.getX() - 1, this.location.getY() + 1), null));
-        }
-        else if (isAbleToCapture(-2, 2)){
-            moves.add(new Move(this.location, new Location(this.location.getX() - 2, this.location.getY() + 2),
-                      new Location(this.location.getX() - 1, this.location.getY() + 1)));
-        }
+        moves = listPossibleCaptures(moves, this.location, new ArrayList<Location>());
 
-        if (isNextCellEmpty(-1, -1)){
-            moves.add(new Move(this.location, new Location(this.location.getX() - 1, this.location.getY() - 1), null));
-        }
-        else if (isAbleToCapture(-2, -2)){
-            moves.add(new Move(this.location, new Location(this.location.getX() + 2, this.location.getY() + 2),
-                      new Location(this.location.getX() - 1, this.location.getY() - 1)));
-        }
-
-        return super.listPossibleMoves();
+        return moves;
     }
 
-    private boolean isNextCellEmpty(int directionX, int directionY){
-        if (this.board.getPiece(new Location(location.getX() + directionX, this.location.getY() + directionY)) == null){
-            return true;
+    private List<Move> listPossibleCaptures(List<Move> moves, Location location, List<Location> intermediates){
+        if (canCaptureUpRight(location, intermediates))
+        {
+            Location captureLocation = new Location(location.x() - 2, location.y() + 2);
+            intermediates.add(new Location(location.x() - 1, location.y() + 1));
+            moves.add(new Move(location, captureLocation, intermediates));
+            moves = listPossibleCaptures(moves, captureLocation, intermediates);
         }
-        else { return false; }
+
+        if (canCaptureUpLeft(location, intermediates))
+        {
+            Location captureLocation = new Location(location.x() - 2, location.y() - 2);
+            intermediates.add(new Location(location.x() - 1, location.y() - 1));
+            moves.add(new Move(location, captureLocation, intermediates));
+            moves = listPossibleCaptures(moves, captureLocation, intermediates);
+        }
+
+        if (canCaptureDownRight(location, intermediates))
+        {
+            Location captureLocation = new Location(location.x() + 2, location.y() + 2);
+            intermediates.add(new Location(location.x() + 1, location.y() + 1));
+            moves.add(new Move(location, captureLocation, intermediates));
+            moves = listPossibleCaptures(moves, captureLocation, intermediates);
+        }
+
+        if (canCaptureDownLeft(location, intermediates))
+        {
+            Location captureLocation = new Location(location.x() + 2, location.y() - 2);
+            intermediates.add(new Location(location.x() + 1, location.y() - 1));
+            moves.add(new Move(location, captureLocation, intermediates));
+            moves = listPossibleCaptures(moves, captureLocation, intermediates);
+        }
+
+        return moves;
     }
 
-    private boolean isAbleToCapture(int directionX, int directionY){
-        //
-        if (((directionY < 0 && this.location.getY() > 1) || (directionY > 0 && this.location.getY() < 6)) &&
-            ((directionX < 0 && this.location.getX() > 1) || (directionX > 0 && this.location.getX() < 6)) &&
-            (!isNextCellEmpty(directionX/2, directionY/2)) && (isNextCellEmpty(directionX, directionY)) &&
-            ((directionY < 0 && this.location.getY() > 1) || (directionY > 0 && this.location.getY() < 6)) &&
-            ((directionX < 0 && this.location.getX() > 1) || (directionX > 0 && this.location.getX() < 6)) &&
-            (this.board.getPiece(new Location(this.location.getX() + directionX / 2, this.location.getY() + directionY / 2))).getColor() != this.getColor() ){
-            return true;
-            //last row checks if the piece that i can eat is enemy colored
-            // 1st condition checks that the eat action wont leave the board on cols
-            // 2nd conditions checks that eat action wont leave the board on rows
-            // 3rd condition: checks if there is a cell next to me (not empty)
-            // 4nd: checks if the cell after it is empty so i can eat
-            // 5th: checks if the cell that i can eat is enemy color
-        }
-        else { return false; }
+    private boolean canCaptureUpRight(Location currLocation, List<Location> intermediates){
+        if (!(currLocation.y() < 6 && currLocation.x() > 1)) {return false; };
+        Location captureLocation = new Location(currLocation.x() - 1, currLocation.y() + 1);
+
+        return (!intermediates.contains(captureLocation) &&
+                !isCellEmpty(currLocation, -1, 1) &&
+                this.color != this.board.getPiece(captureLocation).getColor() &&
+                isCellEmpty(currLocation, -2, 2));
     }
+
+    private boolean canCaptureUpLeft(Location currLocation, List<Location> intermediates){
+        if (!(currLocation.y() > 1 && currLocation.x() > 1)) {return false; };
+        Location captureLocation = new Location(currLocation.x() - 1, currLocation.y() - 1);
+
+        return (!intermediates.contains(captureLocation) &&
+                !isCellEmpty(currLocation, -1, -1) &&
+                this.color != this.board.getPiece(captureLocation).getColor() &&
+                isCellEmpty(currLocation, -2, -2));
+    }
+
+    private boolean canCaptureDownRight(Location currLocation, List<Location> intermediates){
+        if (!(currLocation.y() < 6 && currLocation.x() < 6)) {return false; };
+        Location captureLocation = new Location(currLocation.x() + 1, currLocation.y() + 1);
+
+        return (!intermediates.contains(captureLocation) &&
+                !isCellEmpty(currLocation, 1, 1) &&
+                this.color != this.board.getPiece(captureLocation).getColor() &&
+                isCellEmpty(currLocation, 2, 2));
+    }
+
+    private boolean canCaptureDownLeft(Location currLocation, List<Location> intermediates){
+        if (!(currLocation.y() > 1 && currLocation.x() < 6)) {return false; };
+        Location captureLocation = new Location(currLocation.x() + 1, currLocation.y() - 1);
+
+        return (!intermediates.contains(captureLocation) &&
+                !isCellEmpty(currLocation, 1, -1) &&
+                this.color != this.board.getPiece(captureLocation).getColor() &&
+                isCellEmpty(currLocation, 2, -2));
+    }
+
+    private boolean isCellEmpty(Location location, int directionX, int directionY){
+        return this.board.getPiece(new Location(location.x() + directionX, location.y() + directionY)) == null;
+    }
+
+
 }

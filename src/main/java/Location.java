@@ -7,6 +7,4 @@ public record Location(int x, int y) {
         Preconditions.checkArgument(y >= 0 && y < 8);
     }
 
-    public int getX() { return this.x; }
-    public int getY() { return this.y; }
 }
