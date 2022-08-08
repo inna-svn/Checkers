@@ -12,7 +12,7 @@ public class UserSession implements Serializable {
     private String username;
     private String password;
     private User user;
-    private String errorMessage = "test error message";
+    private String errorMessage = null;
 
     public String getUsername() {
         return username;
@@ -34,7 +34,7 @@ public class UserSession implements Serializable {
         return errorMessage;
     }
 
-    public boolean isLoggedIn() {
+    public boolean isSignedIn() {
         return user != null;
     }
 
@@ -50,22 +50,25 @@ public class UserSession implements Serializable {
         //       Then startGame()
     }
 
-    public void signIn() {
+    public String signIn() {
         // Note: auto-joins lobby
         // TODO: Check if any lobby has enough players to start
         //       The lobby where u joined might be ready.
         //       Then startGame()
+        errorMessage = null;
         try {
             user = User.signIn(username, password);
-            errorMessage = null;
+            return "home.html?faces-redirect=true";
         } catch (User.SignInError e) {
             errorMessage = e.getMessage();
         }
+        return null;
     }
 
-    public void signOut() {
+    public String signOut() {
         user.signOut();
         user = null;
+        return "index.html?faces-redirect=true";
     }
 
 }
