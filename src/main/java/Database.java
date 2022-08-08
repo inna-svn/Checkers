@@ -1,9 +1,6 @@
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Database {
     private Connection connection = null;
@@ -50,6 +47,35 @@ public class Database {
         if (!closed)
             return connected;
         return "Connection to DB is closed.";
+    }
+
+    public ResultSet execQuery(String query, Database db) throws IllegalAccessException, SQLException {
+        try {
+            Statement s;
+            ResultSet rs;
+            Connection conn = null;
+            conn = getConnection();
+            s = conn.createStatement();
+            rs = s.executeQuery(query);
+            return rs;
+
+        } finally {
+            connection.close();
+        }
+    }
+
+    public int executeQuery(String query) throws Exception {
+        int res = 0;
+        try {
+            ResultSet rs = execQuery(query,database);
+            if (rs.next())
+                res = 1;
+            rs.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     public void execution(String query){

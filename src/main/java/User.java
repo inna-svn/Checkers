@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class User {
-
+    static Database db = new Database();
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Map<Class<? extends Game>, Lobby> inLobbies = new HashMap<>();
@@ -27,7 +27,15 @@ public class User {
         // TODO: Also log the user in
         // TODO: Store to DB
         String addUser = "INSERT INTO users VALUES(" + "'" + username + "'" + "," + "'" + password + "')";
-        //db.execution(addUser);
+
+        try {
+            if (db.executeQuery(addUser) == 1)
+                return new User();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        db.execution(addUser);
         return new User();
     }
 
@@ -36,11 +44,13 @@ public class User {
         var user = new User();
         user.joinTheOnlyLobby();
         return user;
+
     }
 
     void joinLobby(Class<? extends Game> aClass) {
         Lobby.forGame(aClass).addUser(this);
         // TODO: Also update inLobbies
+
     }
 
     void joinTheOnlyLobby() {

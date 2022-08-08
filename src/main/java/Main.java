@@ -3,9 +3,14 @@ public class Main {
         Game g = new CheckersGame();
         Board b = new Board();
 
-        //String addUser = "INSERT INTO users VALUES(4,'Tamar','23587',0)";
+        String addUser = "UPDATE users SET userName=Tamara where id=4";
         Database db = new Database();
         //db.execution(addUser);
+        try {
+            System.out.println(""+db.executeQuery(addUser));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(db.toString());
 
 
