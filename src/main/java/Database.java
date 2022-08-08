@@ -10,7 +10,7 @@ public class Database {
 
     public Database() {
         try {
-            connection = DriverManager.getConnection(url,"root","zubur1");
+            connection = DriverManager.getConnection(url,"root","");
             connection.setAutoCommit(false);
             statement = connection.createStatement();
             connection.commit();
@@ -60,7 +60,7 @@ public class Database {
             return rs;
 
         } finally {
-            connection.close();
+    //        connection.close();
         }
     }
 
@@ -68,14 +68,23 @@ public class Database {
         int res = 0;
         try {
             ResultSet rs = execQuery(query,database);
+            ResultSetMetaData rsmd = rs.getMetaData();
             if (rs.next())
                 res = 1;
-            rs.close();
-            connection.close();
+          //  rs.close();
+        //    connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
+    }
+
+    public int updateQuery(String query) throws Exception {
+        Statement s;
+        Connection conn = getConnection();
+        s = conn.createStatement();
+        int result = s.executeUpdate(query);
+        return result;
     }
 
     public void execution(String query){

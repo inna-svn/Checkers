@@ -3,11 +3,17 @@ public class Main {
         Game g = new CheckersGame();
         Board b = new Board();
 
-        String addUser = "UPDATE users SET userName=Tamara where id=4";
+        String updateUser = "UPDATE users SET userName='Tamara' where id=1";
+        String selectQuery = "select * from users where userName='Tamaraffff';";
+        String selectQueryNegativeTesting = "select * from users where userName='Tamara';";
+
         Database db = new Database();
-        //db.execution(addUser);
         try {
-            System.out.println(""+db.executeQuery(addUser));
+        db.updateQuery(updateUser);
+        System.out.println("result from select query is : " +db.executeQuery(selectQuery));
+        System.out.println("result from select query is : " +db.executeQuery(selectQueryNegativeTesting));
+
+            //     System.out.println(""+db.executeQuery(updateUser));
         } catch (Exception e) {
             e.printStackTrace();
         }
