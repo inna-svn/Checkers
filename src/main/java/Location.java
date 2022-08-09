@@ -6,4 +6,5 @@ public record Location(int x, int y) {
         Preconditions.checkArgument(x >= 0 && x < 8);
         Preconditions.checkArgument(y >= 0 && y < 8);
     }
+
 }

@@ -5,6 +5,7 @@ public interface Piece {
         WHITE,
         BLACK
     }
-    Location location = null;
     List<Move> listPossibleMoves();
+
+    public Color getColor();
 }
