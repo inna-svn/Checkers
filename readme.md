@@ -47,4 +47,4 @@ This also builds the source:
 
 The app is at http://localhost:8080/checkers-1.0-SNAPSHOT/
 
-As of 2022-07-26, you should see numbers 1,2, and 3, each on a separate line.
+There are two hard-coded test users (user/pass): `test1/test1`, `test2/test2`
