@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
-        User activeUser = new User();
-        User inactiveUser = new User();
+        User activeUser = new User("inna");
+        User inactiveUser = new User("ilya");
         Game g = new CheckersGame();
         g.start(activeUser,inactiveUser);
         Board b = new Board();
@@ -9,7 +9,7 @@ public class Main {
         //String addUser = "INSERT INTO users VALUES(4,'Tamar','23587',0)";
         Database db = new Database();
         //db.execution(addUser);
-        System.out.println(db.toString());
+        System.out.println(db);
 
 
     }
