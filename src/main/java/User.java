@@ -29,6 +29,8 @@ public class User {
 //        throw new SignUpError("Password is too short");
         // TODO: Also log the user in
         // TODO: Store to DB
+        String addUser = "INSERT INTO users VALUES(" + "'" + username + "'" + "," + "'" + password + "')";
+        //db.execution(addUser);
         return new User();
     }
 
