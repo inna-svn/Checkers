@@ -3,6 +3,7 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 @SessionScoped
 @ManagedBean
@@ -34,8 +35,16 @@ public class UserSession implements Serializable {
         return errorMessage;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public boolean isSignedIn() {
         return user != null;
+    }
+
+    public Lobby getLobby() {
+        return user.getLobby();
     }
 
     void signUp() {
@@ -69,6 +78,15 @@ public class UserSession implements Serializable {
         user.signOut();
         user = null;
         return "index.html?faces-redirect=true";
+    }
+
+    public Collection<Lobby> getAvailableLobbies() {
+        return user.getAvailableLobbies();
+    }
+
+    public String joinLobby(Lobby lobby) {
+        user.joinLobby(lobby);
+        return "lobby.xhtml?faces-redirect=true";
     }
 
 }
