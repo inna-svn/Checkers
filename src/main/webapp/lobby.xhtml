@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+>
+<h:head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title><ui:insert name="title">Checkers</ui:insert></title>
+</h:head>
+<h:body>
+    You are logged in, #{userSession.username}<br/>
+    <h:form id="signout">
+        <h:commandButton value="Sign Out" action="#{userSession.signOut}"/>
+    </h:form>
+    <!-- TODO: display appropriate message of not in lobby (userSession.lobby == null) -->
+    <!-- TODO: only display if in lobby (userSession.lobby != null) -->
+    <h1>Lobby - #{userSession.lobby.gameName}</h1>
+
+    <h:link outcome="home.xhtml">Home</h:link>
+
+    <h2>Users in the lobby</h2>
+    <ul>
+        <ui:repeat value="#{userSession.lobby.users}" var="user">
+            <li>
+                #{user.username} <h:outputText rendered="#{user == userSession.user}">(you)</h:outputText>
+            </li>
+        </ui:repeat>
+    </ul>
+</h:body>
+</html>

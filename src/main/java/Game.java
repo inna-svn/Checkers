@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface Game {
+
+    String NAME = null;
+
     enum Status {
         IN_PROGRESS,
         FINISHED

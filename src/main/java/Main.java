@@ -1,6 +1,9 @@
 public class Main {
     public static void main(String[] args) {
+        User activeUser = new User("inna");
+        User inactiveUser = new User("ilya");
         Game g = new CheckersGame();
+        g.start(activeUser,inactiveUser);
         Board b = new Board();
 
         String updateUser = "UPDATE users SET userName='Tamara' where id=1";
@@ -17,7 +20,7 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(db.toString());
+        System.out.println(db);
 
 
     }

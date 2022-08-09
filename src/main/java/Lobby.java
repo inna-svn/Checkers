@@ -1,32 +1,39 @@
 import com.google.common.base.Preconditions;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 /**
  * Simple lobby for exactly 2 users
  */
 public class Lobby {
 
-    static Map<Class<? extends Game>, Lobby> lobbies;
+    protected static final Collection<Lobby> lobbies = new ArrayList<>();
     static {
-        Game.allGamesClasses().forEach(aClass -> lobbies.put(aClass, new Lobby()));
+        Game.allGamesClasses().forEach(gameClass -> lobbies.add(new Lobby(gameClass)));
     }
 
     Set<User> users;
+    private final Class<? extends Game> gameClass;
 
-    public Lobby() {
+    Lobby(Class<? extends Game> gameClass) {
+        this.gameClass = gameClass;
         clearUsers();
     }
 
-    public static Lobby forGame(Class<? extends Game> aClass) {
-        return lobbies.get(aClass);
+    public String getGameName() {
+        // Is there better way? It is known that Game interface has NAME...
+        try {
+            return gameClass.getField("NAME").get(null).toString();
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void forEach(BiConsumer<? super Class<? extends Game>, ? super Lobby> cb) {
-        lobbies.forEach(cb);
+    public Set<User> getUsers() {
+        return users;
     }
 
     private void clearUsers() {
@@ -44,9 +51,6 @@ public class Lobby {
         users.remove(user);
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
 
     public boolean canStartGame() {
         return users.size() == 2;
@@ -56,6 +60,7 @@ public class Lobby {
      * Returns users and clears the lobby.
      */
     public Set<User> startGame() {
+        // TODO: return game with the users from lobby
         Preconditions.checkState(canStartGame());
         var ret = users;
         clearUsers();

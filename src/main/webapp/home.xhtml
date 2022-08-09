@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+>
+<h:head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title><ui:insert name="title">Checkers</ui:insert></title>
+</h:head>
+<h:body>
+    You are logged in, #{userSession.username}<br/>
+    <h:form id="signout">
+        <h:commandButton value="Sign Out" action="#{userSession.signOut}"/>
+    </h:form>
+    <br/>
+    <h2>Join one of the Lobbies</h2>
+    <ul>
+        <ui:repeat value="#{userSession.availableLobbies}" var="lobby">
+            <li>
+                <h:form>
+                    <!-- TODO: style it as a link -->
+                    <h:commandButton value="#{lobby.gameName} - #{lobby.users.size()} user(s)" action="#{userSession.joinLobby(lobby)}"/>
+                </h:form>
+            </li>
+        </ui:repeat>
+    </ul>
+    <!--    <h:link outcome="lobby.html"></h:link>-->
+</h:body>
+</html>
