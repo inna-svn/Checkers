@@ -1,3 +1,5 @@
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,13 +12,10 @@ public class Database {
     private static Database database = null;
 
     public Database() {
-        try (
-                Connection connection = DriverManager.getConnection(url,"root","zubur1")) {
+        try {
+            connection = DriverManager.getConnection(url,"root","zubur1");
             connection.setAutoCommit(false);
-            //String addUser = "INSERT INTO users VALUES(1,'Inna','12345',0)";
-            Statement statement = connection.createStatement();
-            System.out.println("Hello from Database()");
-            //statement.execute(addUser);
+            statement = connection.createStatement();
             connection.commit();
         } catch (
                 SQLException sqlException) {
@@ -39,12 +38,22 @@ public class Database {
         return connection;
     }
 
+    public String getConnectionStatus(){
+        String connected = "Connection to DB is opened.";
+        boolean closed = true;
+        try{
+            closed = connection.isClosed();
+        } catch(
+                SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        if (!closed)
+            return connected;
+        return "Connection to DB is closed.";
+    }
+
     public void execution(String query){
-        try
-                {
-            //getConnection().setAutoCommit(false);
-            //String addUser = "INSERT INTO users VALUES(1,'Inna','12345',0)";
-            //Statement statement = connection.createStatement();
+        try {
             getStatement().execute(query);
             getConnection().commit();
         } catch (
@@ -55,7 +64,7 @@ public class Database {
     }
 
     public String toString() {
-        return toString();
+        return url + "\n" + getConnectionStatus();
     }
 
 }
