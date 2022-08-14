@@ -31,7 +31,6 @@ public class CheckersGame implements Game {
             for (int col = ((row % 2) == 0) ? 0 : 1; col < 8; col = col + 2) {
                 // Place a soldier at current location with the right color
                 Location currLocation = new Location(row,col);
-           //     CheckersPiece cp = new CheckersPiece(this.board, currColor, currLocation);
                 board.setPiece(currLocation, new CheckersPiece(board, currColor, currLocation));
             }
         }

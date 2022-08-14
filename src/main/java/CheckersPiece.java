@@ -12,7 +12,6 @@ public class CheckersPiece implements Piece {
     public CheckersPiece(@NotNull Board board, @NotNull Color pieceColor, @NotNull Location location) {
         this.board = board;
         this.location = location;
-  //      this.board.setPiece(location, this);
         this.color = pieceColor;
     }
 
