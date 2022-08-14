@@ -12,7 +12,7 @@ public class CheckersPiece implements Piece {
     public CheckersPiece(@NotNull Board board, @NotNull Color pieceColor, @NotNull Location location) {
         this.board = board;
         this.location = location;
-        this.board.setPiece(location, this);
+  //      this.board.setPiece(location, this);
         this.color = pieceColor;
     }
 
@@ -24,70 +24,72 @@ public class CheckersPiece implements Piece {
         int colorMod = this.color == Color.WHITE ? 1 : -1;
 
         // Check basic right movement
-        if (this.location.y() < 7 && isRowValid(1) && isNextRightCellEmpty()){
+        if (this.location.y() < 7 && isRowValid(1,location) && isNextRightCellEmpty(location)){
             moves.add(new Move(this.location, new Location(this.location.x() + colorMod, this.location.y() + 1), null));
         }
 
         // Check basic left movement
-        if (this.location.y() > 0 && isRowValid(1) && isNextLeftCellEmpty()){
+        if (this.location.y() > 0 && isRowValid(1,location) && isNextLeftCellEmpty(location)){
             moves.add(new Move(this.location, new Location(this.location.x() + colorMod, this.location.y() - 1), null));
         }
 
-        moves = listPossibleCaptures(colorMod, moves, this.location, new ArrayList<Location>());
+        moves = listPossibleCaptures(colorMod, moves, this.location, new ArrayList<Location>(),this.location);
         return moves;
     }
 
-    private List<Move> listPossibleCaptures(int colorMod, List<Move> moves, Location location, List<Location> intermediates){
+    private List<Move> listPossibleCaptures(int colorMod, List<Move> moves, Location location, List<Location> intermediates,Location initalLocation){
         if (canCaptureRight(colorMod, location)) {
             Location captureLocation = new Location(location.x() + colorMod * 2, location.y() + 2);
             intermediates.add(new Location(location.x() + colorMod, location.y() + 1));
-            moves.add(new Move(location, captureLocation, intermediates));
-            moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates);
+            if (! canCaptureRight(colorMod, captureLocation) && ! canCaptureLeft(colorMod, captureLocation))
+                moves.add(new Move(initalLocation, captureLocation, intermediates));
+            moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates,initalLocation);
         }
 
         if (canCaptureLeft(colorMod, location))
         {
             Location captureLocation = new Location(location.x() + colorMod * 2, location.y() - 2);
             intermediates.add(new Location(location.x() + colorMod, location.y() - 1));
-            moves.add(new Move(location, captureLocation, intermediates));
-            moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates);
+            if (! canCaptureRight(colorMod, captureLocation) && ! canCaptureLeft(colorMod, captureLocation))
+                moves.add(new Move(initalLocation, captureLocation, intermediates));
+            moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates,initalLocation);
         }
 
         return moves;
     }
 
     private boolean canCaptureRight(int colorMod, Location location){
-        return (location.y() < 6 && isRowValid(2) && !isNextRightCellEmpty() && isNextNextRightCellEmpty() &&
+        return (location.y() < 6 && isRowValid(2,location) && !isNextRightCellEmpty(location) && isNextNextRightCellEmpty(location) &&
                 this.color != this.board.getPiece(new Location(location.x() + colorMod, location.y() + 1)).getColor());
     }
 
     private boolean canCaptureLeft(int colorMod, Location location){
-        return (location.y() > 1 && isRowValid(2) && !isNextLeftCellEmpty() && isNextNextLeftCellEmpty() &&
+        return (location.y() > 1 && isRowValid(2,location) && !isNextLeftCellEmpty(location) && isNextNextLeftCellEmpty(location) &&
                 this.color != this.board.getPiece(new Location(location.x() + colorMod, location.y() - 1)).getColor());
     }
 
-    private boolean isRowValid(int rowDelta){
-        return (this.color == Color.WHITE && this.location.x() <= 7 - rowDelta) ||
-               (this.color == Color.BLACK && this.location.x() >= 0 + rowDelta);
+    private boolean isRowValid(int rowDelta,Location location){
+        return (this.color == Color.WHITE && location.x() <= 7 - rowDelta) ||
+               (this.color == Color.BLACK && location.x() >= 0 + rowDelta);
     }
 
-    private boolean isNextRightCellEmpty(){
+    private boolean isNextRightCellEmpty(Location location){
         int colorMod = this.color == Color.WHITE ? 1 : -1;
-        return this.board.getPiece(new Location(location.x() + colorMod, this.location.y() + 1)) == null;
+        return this.board.getPiece(new Location(location.x() + colorMod, location.y() + 1)) == null;
     }
 
-    private boolean isNextLeftCellEmpty(){
+    private boolean isNextLeftCellEmpty(Location location){
         int colorMod = this.color == Color.WHITE ? 1 : -1;
-        return this.board.getPiece(new Location(location.x() + colorMod, this.location.y() - 1)) == null;
+        return this.board.getPiece(new Location(location.x() + colorMod, location.y() - 1)) == null;
     }
 
-    private boolean isNextNextRightCellEmpty(){
+    private boolean isNextNextRightCellEmpty(Location location){
         int colorMod = this.color == Color.WHITE ? 2 : -2;
-        return this.board.getPiece(new Location(location.x() + colorMod, this.location.y() + 2)) == null;
+        return this.board.getPiece(new Location(location.x() + colorMod, location.y() + 2)) == null;
     }
 
-    private boolean isNextNextLeftCellEmpty(){
+    private boolean isNextNextLeftCellEmpty(Location location){
         int colorMod = this.color == Color.WHITE ? 2 : -2;
-        return this.board.getPiece(new Location(location.x() + colorMod, this.location.y() - 2)) == null;
+        return this.board.getPiece(new Location(location.x() + colorMod, location.y() - 2)) == null;
     }
 }
