@@ -6,6 +6,20 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
+        
+//        try {
+//            User activeUser = new User("inna");
+//            activeUser=User.signIn("Meirav", "98745");
+//            System.out.println(activeUser.toString());
+//        } catch (User.SignInError signInError) {
+//            signInError.printStackTrace();
+//        }
+//        User newUser = new User("");
+//        try {
+//            newUser=User.signUp("new","123");
+//        } catch (User.SignUpError signUpError) {
+//            signUpError.printStackTrace();
+//        }
         User activeUser = new User("inna");
         User inactiveUser = new User("ilya");
         Game g = new CheckersGame();
@@ -28,4 +42,5 @@ public class Main {
 
 
     }
+
 }
