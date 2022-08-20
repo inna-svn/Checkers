@@ -10,17 +10,19 @@ public class Board {
     }
 
     public Piece getPiece(@NotNull Location location) {
-        return board[location.y()][location.x()];
+        return this.board[location.x()][location.y()];
     }
 
     public void setPiece(@NotNull Location location, @NotNull Piece piece) {
-        Preconditions.checkArgument(board[location.y()][location.x()] == null, "Programming Error. Placing piece into already occupied Location");
-        board[location.y()][location.x()] = piece;
+        Preconditions.checkArgument(board[location.x()][location.y()] == null, "Programming Error. Placing piece into already occupied Location");
+        this.board[location.x()][location.y()] =new CheckersPiece(this, piece.getColor() ,location);
     }
 
     public void removePiece(@NotNull Location location) {
-        Preconditions.checkArgument(board[location.y()][location.x()] != null, "Programming Error. Removing non-existing Piece");
-        board[location.y()][location.x()] = null;
+        Preconditions.checkArgument(board[location.x()][location.y()] != null, "Programming Error. Removing non-existing Piece");
+        this.board[location.x()][location.y()] = null;
+
+        System.out.println("piece "+location+"was removed");
 
     }
 
