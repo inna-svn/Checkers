@@ -2,24 +2,30 @@ import java.sql.*;
 
 
 public class Database {
-    private Connection connection = null;
-    private Statement statement = null;
+    private final Connection connection;
+    private final Statement statement;
     private static final String url = "jdbc:mysql://localhost:3306/checkers";
     private static Database database = null;
 
-    public Database() {
+    public Database() throws SQLException{
         try {
             connection = DriverManager.getConnection(url,"root","zubur1");
             connection.setAutoCommit(true);
             statement = connection.createStatement();
         } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+          sqlException.printStackTrace();
+          throw sqlException;
         }
     }
 
     public static Database getDatabase(){
-        if (database == null)
-            database = new Database();
+        if (database == null) {
+            try {
+                database = new Database();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+        }
         return database;
     }
 
