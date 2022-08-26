@@ -1,6 +1,9 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 public class User {
@@ -8,13 +11,17 @@ public class User {
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Set<Lobby> lobbies = new HashSet<>();
-    private final String username;
+    private String username;
+    private int id;
+    //private final String username;
 
     static User testUser1 = new User("test1");
     static User testUser2 = new User("test2");
 
     public User(String username) {
         this.username = username;
+       // this.id = id;
+
     }
 
     public String getUsername() {
@@ -34,24 +41,36 @@ public class User {
     }
 
     static User signUp(@NotNull String username, @NotNull String password) throws SignUpError {
-//        throw new SignUpError("User with the given username already exists");
 //        throw new SignUpError("Password is too short");
         // TODO: Also log the user in
-        // TODO: Store to DB
-        String addUser = "INSERT INTO users VALUES(" + "'" + username + "'" + "," + "'" + password + "')";
-        //db.execution(addUser);
-        return new User(username);
+        // TODO: Validation
+
+        try {
+
+            PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)");
+            preparedStmt.setString(1,username);
+            preparedStmt.setString(2,password);
+            preparedStmt.executeUpdate();
+            User.signIn(username,password);
+        } catch (SQLException | SignInError sqlException) {
+            throw new SignUpError("User with the given username already exists");
+        }
+        return null;
     }
 
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
+        // Lookup the User in the DB
         User user = null;
-        if (username.equals("test1") && password.equals("test1")) {
-            user = testUser1;
+        try {
+            PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1");
+            preparedStmt.setString(1,username);
+            preparedStmt.setString(2,password);
+            ResultSet u = preparedStmt.executeQuery();
+            if(u.next())
+                return new User(u.getString("userName"));
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
         }
-        if (username.equals("test2") && password.equals("test2")) {
-            user = testUser2;
-        }
-        // TODO: Lookup the User in the DB
         if (user == null) {
             throw new SignInError("User not found or password does not match");
         }
