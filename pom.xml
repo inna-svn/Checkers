@@ -62,6 +62,11 @@
             <version>3.0.1</version> <!-- todo: check version -->
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.2</version>
+        </dependency>
 
     </dependencies>
 
