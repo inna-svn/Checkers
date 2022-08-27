@@ -46,35 +46,38 @@ public class User {
         // TODO: Validation
 
         try {
-
-            PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)");
-            preparedStmt.setString(1,username);
-            preparedStmt.setString(2,password);
-            preparedStmt.executeUpdate();
-            User.signIn(username,password);
-        } catch (SQLException | SignInError sqlException) {
-            throw new SignUpError("User with the given username already exists");
+            try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)")) {
+                preparedStmt.setString(1, username);
+                preparedStmt.setString(2, password);
+                preparedStmt.executeUpdate();
+                // TODO: Separate handling of (A) duplicate username and (B) any other SQL error
+            }
+            return User.signIn(username,password);
+        } catch (SQLException | SignInError exception) {
+            exception.printStackTrace();
+            throw new SignUpError("User with the given username already exists OR database error");
         }
-        return null;
     }
 
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
         // Lookup the User in the DB
         User user = null;
         try {
-            PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1");
-            preparedStmt.setString(1,username);
-            preparedStmt.setString(2,password);
-            ResultSet u = preparedStmt.executeQuery();
-            if(u.next())
+            ResultSet u;
+            try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1")) {
+                preparedStmt.setString(1, username);
+                preparedStmt.setString(2, password);
+                u = preparedStmt.executeQuery();
+            }
+            if(u.next()) {
+                // TODO: User.id
                 return new User(u.getString("userName"));
+            }
+            throw new SignInError("User not found or password does not match");
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
+            throw new SignInError("Database Failure");
         }
-        if (user == null) {
-            throw new SignInError("User not found or password does not match");
-        }
-        return user;
     }
 
     void joinLobby(@NotNull Lobby lobby) {
