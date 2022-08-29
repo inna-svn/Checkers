@@ -39,19 +39,34 @@ public class CheckersPiece implements Piece {
     private List<Move> listPossibleCaptures(int colorMod, List<Move> moves, Location location, List<Location> intermediates,Location initalLocation){
         if (canCaptureRight(colorMod, location)) {
             Location captureLocation = new Location(location.x() + colorMod * 2, location.y() + 2);
-            intermediates.add(new Location(location.x() + colorMod, location.y() + 1));
-            if (! canCaptureRight(colorMod, captureLocation) && ! canCaptureLeft(colorMod, captureLocation))
-                moves.add(new Move(initalLocation, captureLocation, intermediates));
-            moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates,initalLocation);
+            intermediates.add(captureLocation);
+
+            if (! canCaptureRight(colorMod, captureLocation) && ! canCaptureLeft(colorMod, captureLocation)){
+                moves.add(new Move(initalLocation, captureLocation, getCopyOfIntermidiates(intermediates)));
+                //intermediates.clear();
+                intermediates.remove(captureLocation);
+                //System.out.println("x: " + location.x() + ", y: " + location.y() + ", Move: " );
+            }
+            else {
+                moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates, initalLocation);
+                intermediates.remove(captureLocation);
+            }
         }
 
         if (canCaptureLeft(colorMod, location))
         {
             Location captureLocation = new Location(location.x() + colorMod * 2, location.y() - 2);
-            intermediates.add(new Location(location.x() + colorMod, location.y() - 1));
-            if (! canCaptureRight(colorMod, captureLocation) && ! canCaptureLeft(colorMod, captureLocation))
-                moves.add(new Move(initalLocation, captureLocation, intermediates));
-            moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates,initalLocation);
+            intermediates.add(captureLocation);
+            if (! canCaptureRight(colorMod, captureLocation) && ! canCaptureLeft(colorMod, captureLocation)) {
+                moves.add(new Move(initalLocation, captureLocation, getCopyOfIntermidiates(intermediates)));
+                //intermediates.clear();
+                intermediates.remove(captureLocation);
+                //System.out.println("x: " + location.x() + ", y: " + location.y() + ", Move: " );
+            }
+            else {
+                moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates, initalLocation);
+                intermediates.remove(captureLocation);
+            }
         }
 
         return moves;
@@ -90,5 +105,11 @@ public class CheckersPiece implements Piece {
     private boolean isNextNextLeftCellEmpty(Location location){
         int colorMod = this.color == Color.WHITE ? 2 : -2;
         return this.board.getPiece(new Location(location.x() + colorMod, location.y() - 2)) == null;
+    }
+
+    public List<Location> getCopyOfIntermidiates(List <Location>intermediates){
+        List <Location> temp= new ArrayList<>();
+        intermediates.forEach(it->temp.add(it));
+        return temp;
     }
 }

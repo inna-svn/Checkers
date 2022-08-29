@@ -53,6 +53,6 @@ public interface Game {
         ));
     }
     public Board getBoard();
-
+    public void PrintBoard();
 
 }
