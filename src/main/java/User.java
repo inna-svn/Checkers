@@ -11,16 +11,16 @@ public class User {
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Set<Lobby> lobbies = new HashSet<>();
-    private String username;
+    private final String username;
     private int id;
-    //private final String username;
+
 
     static User testUser1 = new User("test1");
     static User testUser2 = new User("test2");
 
     public User(String username) {
         this.username = username;
-       // this.id = id;
+        //this.id = id;
 
     }
 
@@ -42,22 +42,26 @@ public class User {
 
     static User signUp(@NotNull String username, @NotNull String password) throws SignUpError {
 //        throw new SignUpError("Password is too short");
-        // TODO: Also log the user in
         // TODO: Validation
+        try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)")) {
+            preparedStmt.setString(1, username);
+            preparedStmt.setString(2, password);
+            preparedStmt.executeUpdate();
 
+
+            // TODO: Separate handling of (A) duplicate username and (B) any other SQL error
+        } catch (SQLException e) {
+            //   e.printStackTrace();
+            throw new SignUpError(e.toString());
+        }
         try {
-            try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)")) {
-                preparedStmt.setString(1, username);
-                preparedStmt.setString(2, password);
-                preparedStmt.executeUpdate();
-                // TODO: Separate handling of (A) duplicate username and (B) any other SQL error
-            }
-            return User.signIn(username,password);
-        } catch (SQLException | SignInError exception) {
+            return User.signIn(username, password);
+        } catch (SignInError exception) {
             exception.printStackTrace();
-            throw new SignUpError("User with the given username already exists OR database error");
+            throw new SignUpError(exception.toString());
         }
     }
+
 
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
         // Lookup the User in the DB
@@ -68,12 +72,11 @@ public class User {
                 preparedStmt.setString(1, username);
                 preparedStmt.setString(2, password);
                 u = preparedStmt.executeQuery();
+                if (u.next()) {
+                    return new User(u.getString("userName"));
+                }
+                throw new SignInError("User not found or password does not match");
             }
-            if(u.next()) {
-                // TODO: User.id
-                return new User(u.getString("userName"));
-            }
-            throw new SignInError("User not found or password does not match");
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
             throw new SignInError("Database Failure");
@@ -99,6 +102,7 @@ public class User {
 
     UserGameScore scoreForGame(Class<? extends Game> gameClass, Game.Outcome outcome) {
         // TODO: Check in database first
+
         return scores.computeIfAbsent(gameClass, c -> new UserGameScore(this, gameClass, 0, 0, 0.0F));
     }
 

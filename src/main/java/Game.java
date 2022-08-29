@@ -52,7 +52,9 @@ public interface Game {
                 // Add new classes here
         ));
     }
+
     public Board getBoard();
+
     public void PrintBoard();
 
 }
