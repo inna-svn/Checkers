@@ -55,7 +55,7 @@ public class User {
             throw new SignUpError(e.toString());
         }
         try {
-            return newUser.signIn(username, password);
+            return signIn(username, password);
         } catch (SignInError exception) {
             exception.printStackTrace();
             throw new SignUpError(exception.toString());
