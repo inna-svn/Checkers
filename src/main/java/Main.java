@@ -17,11 +17,20 @@ public class Main {
 //            signInError.printStackTrace();
 //        }
         //   User newUser = new User("");
-//        try {
-//            newUser=User.signUp("new","123");
-//        } catch (User.SignUpError signUpError) {
-//            signUpError.printStackTrace();
-//        }
+        try {
+            User newUser = User.signUp("new1", "123");
+            System.out.println("user: newUser signed up");
+        } catch (User.SignUpError signUpError) {
+            signUpError.printStackTrace();
+        }
+        try {
+            User existingUser = User.signIn("new1", "123");
+            System.out.println("user: existingUser signed in");
+
+        } catch (User.SignInError signUpError) {
+            signUpError.printStackTrace();
+        }
+
         User activeUser = new User(3, "inna");
         User inactiveUser = new User(4, "ilya");
         Game g = new CheckersGame();

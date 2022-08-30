@@ -7,21 +7,22 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class User {
-
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Set<Lobby> lobbies = new HashSet<>();
+    private final int id;
     private final String username;
-    private int id;
-
 
     static User testUser1 = new User(1, "test1");
     static User testUser2 = new User(2, "test2");
 
-    public User(Integer id, String username) {
+    public User(int id, String username) {
+        this.id = id;
         this.username = username;
-        //this.id = id;
+    }
 
+    public int getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -43,39 +44,33 @@ public class User {
     static User signUp(@NotNull String username, @NotNull String password) throws SignUpError {
 //        throw new SignUpError("Password is too short");
         // TODO: Validation
+        User newUser;
         try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)")) {
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
             preparedStmt.executeUpdate();
-            // TODO: Populate new User object's id field from preparedStmt
-
-
-            // TODO: Separate handling of (A) duplicate username and (B) any other SQL error
+            newUser = new User(preparedStmt.getResultSet().getInt("id"), username);
         } catch (SQLException e) {
             //   e.printStackTrace();
             throw new SignUpError(e.toString());
         }
         try {
-            return User.signIn(username, password);
+            return newUser.signIn(username, password);
         } catch (SignInError exception) {
             exception.printStackTrace();
             throw new SignUpError(exception.toString());
         }
     }
 
-
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
         // Lookup the User in the DB
-        User user = null;
         try {
-            ResultSet u;
             try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1")) {
                 preparedStmt.setString(1, username);
                 preparedStmt.setString(2, password);
-                u = preparedStmt.executeQuery();
+                ResultSet u = preparedStmt.executeQuery();
                 if (u.next()) {
-                    // TODO: Also fetch id field
-                    return new User(u.getString("userName"));
+                    return new User(u.getInt("id"), u.getString("userName"));
                 }
                 throw new SignInError("User not found or password does not match");
             }
