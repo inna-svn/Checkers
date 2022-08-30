@@ -15,10 +15,10 @@ public class User {
     private int id;
 
 
-    static User testUser1 = new User("test1");
-    static User testUser2 = new User("test2");
+    static User testUser1 = new User(1, "test1");
+    static User testUser2 = new User(2, "test2");
 
-    public User(String username) {
+    public User(Integer id, String username) {
         this.username = username;
         //this.id = id;
 
@@ -47,6 +47,7 @@ public class User {
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
             preparedStmt.executeUpdate();
+            // TODO: Populate new User object's id field from preparedStmt
 
 
             // TODO: Separate handling of (A) duplicate username and (B) any other SQL error
@@ -73,6 +74,7 @@ public class User {
                 preparedStmt.setString(2, password);
                 u = preparedStmt.executeQuery();
                 if (u.next()) {
+                    // TODO: Also fetch id field
                     return new User(u.getString("userName"));
                 }
                 throw new SignInError("User not found or password does not match");
@@ -100,10 +102,15 @@ public class User {
         abandonActiveGame();
     }
 
-    UserGameScore scoreForGame(Class<? extends Game> gameClass, Game.Outcome outcome) {
-        // TODO: Check in database first
+    UserGameScore scoreForGame(Class<? extends Game> gameClass) {
+        // TODO: Check in database first, if exists in DB - return that
 
-        return scores.computeIfAbsent(gameClass, c -> new UserGameScore(this, gameClass, 0, 0, 0.0F));
+        return scores.computeIfAbsent(gameClass, c -> {
+            var score = new UserGameScore(this, gameClass, 0, 0, 0.0F);
+            // TODO: Save score
+            return score;
+        });
+
     }
 
     /**

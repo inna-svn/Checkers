@@ -22,8 +22,8 @@ public class Main {
 //        } catch (User.SignUpError signUpError) {
 //            signUpError.printStackTrace();
 //        }
-        User activeUser = new User("inna");
-        User inactiveUser = new User("ilya");
+        User activeUser = new User(3, "inna");
+        User inactiveUser = new User(4, "ilya");
         Game g = new CheckersGame();
         g.start(activeUser, inactiveUser);
 
