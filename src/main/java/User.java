@@ -10,14 +10,18 @@ public class User {
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Set<Lobby> lobbies = new HashSet<>();
-    private final int id;
+    private  int id;
     private final String username;
 
-    static User testUser1 = new User(1, "test1");
-    static User testUser2 = new User(2, "test2");
+    static User testUser1 = new User(55, "test1");
+    static User testUser2 = new User(56, "test2");
 
     public User(int id, String username) {
         this.id = id;
+        this.username = username;
+    }
+
+    public User(String username) {
         this.username = username;
     }
 
@@ -55,22 +59,26 @@ public class User {
             throw new SignUpError(e.toString());
         }
         try {
-            return signIn(username, password);
+            return signIn(newUser, password);
         } catch (SignInError exception) {
             exception.printStackTrace();
             throw new SignUpError(exception.toString());
         }
     }
 
-    static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
+    static User signIn(@NotNull User user, @NotNull String password) throws SignInError {
+    //static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
         // Lookup the User in the DB
         try {
             try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1")) {
-                preparedStmt.setString(1, username);
+                //preparedStmt.setString(1, username);
+                preparedStmt.setString(1, user.username);
                 preparedStmt.setString(2, password);
                 ResultSet u = preparedStmt.executeQuery();
                 if (u.next()) {
-                    return new User(u.getInt("id"), u.getString("userName"));
+                    user.id=u.getInt("id");
+                    //return new User(u.getInt("id"), u.getString("userName"));
+                    return user;
                 }
                 throw new SignInError("User not found or password does not match");
             }

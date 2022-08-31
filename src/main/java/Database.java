@@ -9,6 +9,11 @@ public class Database {
 
     public Database() throws SQLException{
         try {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             connection = DriverManager.getConnection(url,"root","zubur1");
             connection.setAutoCommit(true);
             statement = connection.createStatement();

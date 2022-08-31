@@ -65,8 +65,9 @@ public class UserSession implements Serializable {
         //       The lobby where u joined might be ready.
         //       Then startGame()
         errorMessage = null;
+        User u = new  User(username);
         try {
-            user = User.signIn(username, password);
+            User.signIn(u, password);
             return "home.html?faces-redirect=true";
         } catch (User.SignInError e) {
             errorMessage = e.getMessage();

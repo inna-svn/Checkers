@@ -59,13 +59,9 @@ public final class UserGameScore {
         // Insert data to database
         String name = this.user.getUsername();
         try {
-            try (PreparedStatement preparedSelect = Database.getDatabase().getConnection().prepareStatement("SELECT id from users WHERE userName = ?");
-                 PreparedStatement preparedUpdate = Database.getDatabase().getConnection().prepareStatement("UPDATE scores SET rate = ? WHERE userId = ? ")) {
-                preparedSelect.setString(1, name);
-                ResultSet res = preparedSelect.executeQuery();
-                int id = res.getInt("id");
+            try (PreparedStatement preparedUpdate = Database.getDatabase().getConnection().prepareStatement("UPDATE scores SET rate = ? WHERE userId = ? ")) {
                 preparedUpdate.setInt(1, (int) rate);
-                preparedUpdate.setInt(2, id);
+                preparedUpdate.setInt(2, user.getId());
                 preparedUpdate.executeUpdate();
             }
         } catch (SQLException e) {
