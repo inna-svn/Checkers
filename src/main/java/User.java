@@ -10,7 +10,7 @@ public class User {
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Set<Lobby> lobbies = new HashSet<>();
-    private  int id;
+    private int id;
     private final String username;
 
     static User testUser1 = new User(55, "test1");
@@ -18,10 +18,6 @@ public class User {
 
     public User(int id, String username) {
         this.id = id;
-        this.username = username;
-    }
-
-    public User(String username) {
         this.username = username;
     }
 
@@ -45,47 +41,24 @@ public class User {
         }
     }
 
-    static User signUp(@NotNull String username, @NotNull String password) throws SignUpError {
+    static void signUp(@NotNull String username, @NotNull String password) throws SignUpError {
 //        throw new SignUpError("Password is too short");
         // TODO: Validation
-        User newUser;
-        try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)")) {
-            preparedStmt.setString(1, username);
-            preparedStmt.setString(2, password);
-            preparedStmt.executeUpdate();
-            newUser = new User(preparedStmt.getResultSet().getInt("id"), username);
-        } catch (SQLException e) {
-            //   e.printStackTrace();
-            throw new SignUpError(e.toString());
-        }
-        try {
-            return signIn(newUser, password);
-        } catch (SignInError exception) {
-            exception.printStackTrace();
-            throw new SignUpError(exception.toString());
-        }
+
+        //create user in DB only
+        Database.getDatabase().createNewUserInDB(username, password);
+
     }
 
-    static User signIn(@NotNull User user, @NotNull String password) throws SignInError {
-    //static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
+    static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
         // Lookup the User in the DB
-        try {
-            try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1")) {
-                //preparedStmt.setString(1, username);
-                preparedStmt.setString(1, user.username);
-                preparedStmt.setString(2, password);
-                ResultSet u = preparedStmt.executeQuery();
-                if (u.next()) {
-                    user.id=u.getInt("id");
-                    //return new User(u.getInt("id"), u.getString("userName"));
-                    return user;
-                }
-                throw new SignInError("User not found or password does not match");
-            }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-            throw new SignInError("Database Failure");
-        }
+
+        User user;
+
+        user = Database.getDatabase().userSignIn(username, password);
+
+        return user;
+
     }
 
     void joinLobby(@NotNull Lobby lobby) {

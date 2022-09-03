@@ -17,9 +17,9 @@ public class Main {
 //            signInError.printStackTrace();
 //        }
         //   User newUser = new User("");
-        User existingUser =null;
+        User existingUser = null;
         try {
-            existingUser= User.signIn(new User("new"), "123");
+            existingUser = User.signIn("new", "123");
             System.out.println("user: existingUser signed in");
 
         } catch (User.SignInError signUpError) {
@@ -28,10 +28,14 @@ public class Main {
 
 
         try {
-            User newUser = User.signUp("new1", "123");
+            User.signUp("new1", "123");
+            User newUser = User.signIn("new1", "123");
+
             System.out.println("user: newUser signed up");
         } catch (User.SignUpError signUpError) {
             signUpError.printStackTrace();
+        } catch (User.SignInError e) {
+            throw new RuntimeException(e);
         }
 
 

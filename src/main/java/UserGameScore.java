@@ -1,9 +1,5 @@
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public final class UserGameScore {
     private final User user;
     private final Class<? extends Game> gameClass;
@@ -48,6 +44,8 @@ public final class UserGameScore {
             winsNum += 1;
         }
         computeRate();
+
+        Database.getDatabase().saveRate(user,rate);
     }
 
     void computeRate() {
@@ -55,17 +53,6 @@ public final class UserGameScore {
             rate = 0;
         } else {
             rate = (float) winsNum / (float) gamesNum;
-        }
-        // Insert data to database
-        String name = this.user.getUsername();
-        try {
-            try (PreparedStatement preparedUpdate = Database.getDatabase().getConnection().prepareStatement("UPDATE scores SET rate = ? WHERE userId = ? ")) {
-                preparedUpdate.setInt(1, (int) rate);
-                preparedUpdate.setInt(2, user.getId());
-                preparedUpdate.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 }
