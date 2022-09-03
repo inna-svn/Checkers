@@ -1,5 +1,6 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
@@ -9,6 +10,9 @@ import java.util.Collection;
 @ManagedBean
 @Named
 public class UserSession implements Serializable {
+
+    @Inject
+    LobbyEndpoint lobbyEndpoint;
 
     private String username;
     private String password;
@@ -86,6 +90,7 @@ public class UserSession implements Serializable {
 
     public String joinLobby(Lobby lobby) {
         user.joinLobby(lobby);
+        lobbyEndpoint.sendLobby(lobby);
         return "lobby.xhtml?faces-redirect=true";
     }
 

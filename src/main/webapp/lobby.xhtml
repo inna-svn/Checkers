@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
 >
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
@@ -20,6 +21,8 @@
     <h:link outcome="home.xhtml">Home</h:link>
 
     <h2>Users in the lobby</h2>
+
+    <h:panelGroup id="list">
     <ul>
         <ui:repeat value="#{userSession.lobby.users}" var="user">
             <li>
@@ -27,5 +30,17 @@
             </li>
         </ui:repeat>
     </ul>
+    </h:panelGroup>
+
+    <!-- https://javaee.github.io/tutorial/jsf-ws003.html -->
+    <!-- https://javaee.github.io/javaee-spec/javadocs/javax/faces/push/Push.html -->
+    <!-- TOOD: By game ID and user ID, not game name and user name -->
+    <!-- Warning: ajax tag does not work -->
+    <f:websocket channel="lobby" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="renderList" />
+
+    <h:form>
+        <h:commandScript name="renderList" render=":list" />
+    </h:form>
+
 </h:body>
 </html>
