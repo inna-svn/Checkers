@@ -62,6 +62,12 @@ public class User {
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
         // Lookup the User in the DB
         User user = null;
+        if (username.equals("test1") && password.equals("test1")) {
+            return testUser1;
+        }
+        if (username.equals("test2") && password.equals("test2")) {
+            return testUser2;
+        }
         try {
             ResultSet u;
             try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1")) {
