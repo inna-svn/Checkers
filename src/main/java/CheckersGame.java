@@ -153,25 +153,31 @@ public class CheckersGame implements Game {
 
         Map<Piece, List<Move>> currMapp = new HashMap<>();
         currMapp = listPossibleMoves();
-             if (!doesBlackHaveMoves(currMapp)) return "WhiteWins";
-             if (!doesWhiteHaveMoves(currMapp)) return "BlackWins";
+        if (!doesBlackHaveMoves(currMapp)) return "WhiteWins";
+        if (!doesWhiteHaveMoves(currMapp)) return "BlackWins";
 
         return "GameContinues";
     }
 
-    private boolean doesBlackHaveMoves(Map<Piece, List<Move>> currMapp) {
+    public boolean doesBlackHaveMoves(Map<Piece, List<Move>> currMapp) {
         for (Map.Entry<Piece, List<Move>> item : currMapp.entrySet()) {
-            if (item.getKey() != null && item.getKey().getColor() == Piece.Color.BLACK)
+            if (item.getKey() != null && item.getKey().getColor() == Piece.Color.BLACK) {
+                System.out.println("yess");
                 if (!item.getValue().isEmpty()) return true;
+
+            }
 
         }
         return false;
     }
 
-    private boolean doesWhiteHaveMoves(Map<Piece, List<Move>> currMapp) {
+    public boolean doesWhiteHaveMoves(Map<Piece, List<Move>> currMapp) {
         for (Map.Entry<Piece, List<Move>> item : currMapp.entrySet()) {
-            if (item.getKey() != null && item.getKey().getColor() == Piece.Color.WHITE)
-                if (!item.getValue().isEmpty()) return true;
+            if (item.getKey() != null && item.getKey().getColor() == Piece.Color.WHITE) {
+                if (!item.getValue().isEmpty()) {
+                    return true;
+                }
+            }
 
         }
         return false;
