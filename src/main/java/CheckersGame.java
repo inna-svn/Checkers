@@ -2,10 +2,10 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 
 public class CheckersGame implements Game {
@@ -133,42 +133,20 @@ public class CheckersGame implements Game {
         System.out.println("");
     }
 
+    Stream<Piece> allPieces() {
+        return Location.stream().map(location -> this.board.getPiece(location)).filter(Objects::nonNull);
+    }
+
     public boolean isGameEnded() {
-        boolean doesWhiteHavePieces = false;
-        boolean doesBlackHavePieces = false;
-        // Check if each player has atleast one piece
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Piece currPiece = this.board.getPiece(new Location(row, col));
-                if (currPiece != null) {
-                    if (currPiece.getColor() == Piece.Color.BLACK) {
-                        doesBlackHavePieces = true;
-                    } else {
-                        doesWhiteHavePieces = true;
-                    }
-                }
-            }
-        }
+        boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
+        boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
 
         Map<Piece, List<Move>> currMapp = listPossibleMoves();
         return (!doesBlackHavePieces || !doesWhiteHavePieces || !doesBlackHaveMoves(currMapp) || !doesWhiteHaveMoves(currMapp));
     }
     public User getWinner() {
-        boolean doesWhiteHavePieces = false;
-        boolean doesBlackHavePieces = false;
-        // Check if each player has atleast one piece
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Piece currPiece = this.board.getPiece(new Location(row, col));
-                if (currPiece != null) {
-                    if (currPiece.getColor() == Piece.Color.BLACK) {
-                        doesBlackHavePieces = true;
-                    } else {
-                        doesWhiteHavePieces = true;
-                    }
-                }
-            }
-        }
+        boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
+        boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
 
         Map<Piece, List<Move>> currMapp = listPossibleMoves();
         if (!doesBlackHavePieces ||  !doesBlackHaveMoves(currMapp) ) {
