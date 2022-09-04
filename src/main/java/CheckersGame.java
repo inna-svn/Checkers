@@ -13,12 +13,15 @@ public class CheckersGame implements Game {
     static public final String NAME = "Checkers";
 
     User activeUser, inactiveUser;
+    User blackUser , whiteUser;
     Board board = new Board();
 
     @Override
     public void start(@NotNull User user1, @NotNull User user2) {
         activeUser = user1;
         inactiveUser = user2;
+        whiteUser = activeUser;
+        blackUser = inactiveUser;
 
         // Default game pieces
         Piece.Color currColor = Piece.Color.WHITE;
@@ -93,14 +96,14 @@ public class CheckersGame implements Game {
         }
 
         //to do CHECK IF GAME ENDED
-    /*    if (isGameEnded() == "GameContinues") {
+        if (! isGameEnded()) {
             User temp = this.activeUser;
             this.activeUser = this.inactiveUser;
             inactiveUser = temp;
         }
         else {
-            System.out.println("game ended"); // game ended code
-        }*/
+            getWinner();
+        }
     }
 
     public Board getBoard() {
@@ -130,7 +133,7 @@ public class CheckersGame implements Game {
         System.out.println("");
     }
 
-    public String isGameEnded() {
+    public boolean isGameEnded() {
         boolean doesWhiteHavePieces = false;
         boolean doesBlackHavePieces = false;
         // Check if each player has atleast one piece
@@ -147,18 +150,38 @@ public class CheckersGame implements Game {
             }
         }
 
-        if (!doesBlackHavePieces) return "WhiteWins";
-        if (!doesWhiteHavePieces) return "BlackWins";
-
-
-        Map<Piece, List<Move>> currMapp = new HashMap<>();
-        currMapp = listPossibleMoves();
-        if (!doesBlackHaveMoves(currMapp)) return "WhiteWins";
-        if (!doesWhiteHaveMoves(currMapp)) return "BlackWins";
-
-        return "GameContinues";
+        Map<Piece, List<Move>> currMapp = listPossibleMoves();
+        return (!doesBlackHavePieces || !doesWhiteHavePieces || !doesBlackHaveMoves(currMapp) || !doesWhiteHaveMoves(currMapp));
     }
+    public User getWinner() {
+        boolean doesWhiteHavePieces = false;
+        boolean doesBlackHavePieces = false;
+        // Check if each player has atleast one piece
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Piece currPiece = this.board.getPiece(new Location(row, col));
+                if (currPiece != null) {
+                    if (currPiece.getColor() == Piece.Color.BLACK) {
+                        doesBlackHavePieces = true;
+                    } else {
+                        doesWhiteHavePieces = true;
+                    }
+                }
+            }
+        }
 
+        Map<Piece, List<Move>> currMapp = listPossibleMoves();
+        if (!doesBlackHavePieces ||  !doesBlackHaveMoves(currMapp) ) {
+            Status status = Status.FINISHED;
+            return whiteUser;
+        }
+        else if (!doesWhiteHavePieces ||  !doesWhiteHaveMoves(currMapp) ) {
+            Status status = Status.FINISHED;
+            return blackUser;
+        }
+        return blackUser;
+
+    }
     public boolean doesBlackHaveMoves(Map<Piece, List<Move>> currMapp) {
         for (Map.Entry<Piece, List<Move>> item : currMapp.entrySet()) {
             if (item.getKey() != null && item.getKey().getColor() == Piece.Color.BLACK) {

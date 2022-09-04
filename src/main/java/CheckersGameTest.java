@@ -96,6 +96,8 @@ class CheckersGameTest {
     @org.junit.jupiter.api.Test
     void isGameEnded() {
         doesWhiteHaveMoves();
-        Assertions.assertEquals(game.isGameEnded(),"BlackWins");
+        Assertions.assertTrue(game.isGameEnded());
+        Assertions.assertEquals(game.getWinner().getUsername(),"ilya");
+
     }
 }
