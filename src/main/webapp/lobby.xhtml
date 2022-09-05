@@ -36,11 +36,24 @@
     <!-- https://javaee.github.io/javaee-spec/javadocs/javax/faces/push/Push.html -->
     <!-- TOOD: By game ID and user ID, not game name and user name -->
     <!-- Warning: ajax tag does not work -->
-    <f:websocket channel="lobby" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="renderList" />
+    <f:websocket channel="lobby" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage" />
+
 
     <h:form>
         <h:commandScript name="renderList" render=":list" />
     </h:form>
+
+    <script>
+        function onMessage(message, channel, messageEvent) {
+            console.debug('onMessage', message, channel, messageEvent);
+            window[message](...arguments);
+        }
+
+        function startGame() {
+            
+        }
+    </script>
+
 
 </h:body>
 </html>

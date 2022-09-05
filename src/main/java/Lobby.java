@@ -23,6 +23,10 @@ public class Lobby {
         clearUsers();
     }
 
+    public Class<? extends Game> getGameClass() {
+        return gameClass;
+    }
+
     public String getGameName() {
         // Is there better way? It is known that Game interface has NAME...
         try {
