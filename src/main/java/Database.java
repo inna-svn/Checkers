@@ -29,6 +29,7 @@ public class Database {
                 database = new Database();
             } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
+                throw new RuntimeException(sqlException);
             }
         }
         return database;
@@ -82,9 +83,9 @@ public class Database {
 
                 throw new User.SignInError("User not found or password does not match");
             }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-            throw new User.SignInError("Database Failure");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new User.SignInError(e.toString());
         }
     }
 
