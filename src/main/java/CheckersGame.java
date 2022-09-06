@@ -38,7 +38,6 @@ public class CheckersGame implements Game {
                 // Place a soldier at current location with the right color
                 Location currLocation = new Location(row, col);
                 board.setPiece(currLocation, new CheckersPiece(board, currColor, currLocation));
-                //        System.out.println( currColor.toString()+ currLocation);
             }
         }
     }
@@ -96,13 +95,15 @@ public class CheckersGame implements Game {
         }
 
         //to do CHECK IF GAME ENDED
-        if (! isGameEnded()) {
+        User winner = getWinner();
+        if (winner != null) {
             User temp = this.activeUser;
             this.activeUser = this.inactiveUser;
             inactiveUser = temp;
         }
         else {
-            getWinner();
+         //   getWinner();
+
         }
     }
 
@@ -137,13 +138,13 @@ public class CheckersGame implements Game {
         return Location.stream().map(location -> this.board.getPiece(location)).filter(Objects::nonNull);
     }
 
-    public boolean isGameEnded() {
+   /* public boolean isGameEnded() {
         boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
         boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
 
         Map<Piece, List<Move>> currMapp = listPossibleMoves();
         return (!doesBlackHavePieces || !doesWhiteHavePieces || !doesBlackHaveMoves(currMapp) || !doesWhiteHaveMoves(currMapp));
-    }
+    }*/
     public User getWinner() {
         boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
         boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
@@ -157,13 +158,12 @@ public class CheckersGame implements Game {
             Status status = Status.FINISHED;
             return blackUser;
         }
-        return blackUser;
+        return null;
 
     }
     public boolean doesBlackHaveMoves(Map<Piece, List<Move>> currMapp) {
         for (Map.Entry<Piece, List<Move>> item : currMapp.entrySet()) {
             if (item.getKey() != null && item.getKey().getColor() == Piece.Color.BLACK) {
-                System.out.println("yess");
                 if (!item.getValue().isEmpty()) return true;
 
             }

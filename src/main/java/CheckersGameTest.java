@@ -6,14 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CheckersGameTest {
     CheckersGame game;
     User activeUser;
     User inactiveUser;
 
 
-    @BeforeAll
+  //  @BeforeAll
     @org.junit.jupiter.api.Test
     public void setUp()  {
         activeUser = new User("inna");
@@ -24,6 +23,7 @@ class CheckersGameTest {
 
     @org.junit.jupiter.api.Test
     void start() {
+        setUp();
         Piece.Color expectedColor;
         for (int row = 0; row < 8; row++) {
             for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
@@ -37,6 +37,7 @@ class CheckersGameTest {
 
     @org.junit.jupiter.api.Test
     void listPossibleMovesWithSingleCapture() {
+        setUp();
         Map<Piece, List<Move>> currMapp ;
         game.makeMove(activeUser, new Move(new Location(5, 6), new Location(4, 7), null));
         game.makeMove(activeUser, new Move(new Location(4, 7), new Location(3, 6), null));
@@ -51,6 +52,8 @@ class CheckersGameTest {
     }
     @org.junit.jupiter.api.Test
     void listPossibleMovesWithMultipleCapture() {
+        setUp();
+
         Map<Piece, List<Move>> currMapp ;
         game.makeMove(activeUser, new Move(new Location(5, 6), new Location(4, 7), null));
         game.makeMove(activeUser, new Move(new Location(4, 7), new Location(3, 6), null));
@@ -65,6 +68,8 @@ class CheckersGameTest {
     }
     @org.junit.jupiter.api.Test
     void makeMove() {
+        setUp();
+
         Piece sourcePiece = game.getBoard().getPiece(new Location(2, 1));
         game.makeMove(activeUser, new Move(new Location(2, 1), new Location(3, 1), null));
         Assertions.assertNull(game.getBoard().getPiece(new Location(2, 1)));
@@ -74,6 +79,8 @@ class CheckersGameTest {
 
     @org.junit.jupiter.api.Test
     void doesWhiteHaveMoves() {
+        setUp();
+
         Map<Piece, List<Move>> currMapp ;
         currMapp = game.listPossibleMoves();
         Assertions.assertTrue(game.doesWhiteHaveMoves(currMapp));
@@ -94,9 +101,10 @@ class CheckersGameTest {
         Assertions.assertFalse(game.doesWhiteHaveMoves(currMapp));
     }
     @org.junit.jupiter.api.Test
-    void isGameEnded() {
+    void getWinner() {
+        setUp();
+
         doesWhiteHaveMoves();
-        Assertions.assertTrue(game.isGameEnded());
         Assertions.assertEquals(game.getWinner().getUsername(),"ilya");
 
     }
