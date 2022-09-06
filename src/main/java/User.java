@@ -1,9 +1,6 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 public class User {
@@ -46,7 +43,7 @@ public class User {
         // TODO: Validation
 
         //create user in DB only
-        Database.getDatabase().createNewUserInDB(username, password);
+        Database.getDatabase().createUser(username, password);
 
     }
 
@@ -84,6 +81,9 @@ public class User {
         return scores.computeIfAbsent(gameClass, c -> {
             var score = new UserGameScore(this, gameClass, 0, 0, 0.0F);
             // TODO: Save score
+
+            Database.getDatabase().updateScores(this, gameClass.getName(), 0,0,0.0F);
+
             return score;
         });
 

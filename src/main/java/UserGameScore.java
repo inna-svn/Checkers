@@ -13,6 +13,7 @@ public final class UserGameScore {
         this.gamesNum = gamesNum;
         this.winsNum = winsNum;
         this.rate = rate;
+
     }
 
     public User getUser() {

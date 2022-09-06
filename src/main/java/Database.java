@@ -42,7 +42,7 @@ public class Database {
         return connection;
     }
 
-    public void createNewUserInDB(String username, String password) throws User.SignUpError {
+    public void createUser(String username, String password) throws User.SignUpError {
 
         String query = "INSERT INTO users(userName,password) VALUES(?,?)";
 
@@ -88,9 +88,9 @@ public class Database {
         }
     }
 
-    public int getUserID(User user) {
+    public int getUserId(User user) {
         int id;
-        
+
         String username = user.getUsername();
 
         String queryId = "SELECT id FROM users WHERE userName= ? ";
@@ -98,7 +98,6 @@ public class Database {
         try (PreparedStatement preparedStmt = getConnection().prepareStatement(queryId)) {
 
             preparedStmt.setString(1, username);
-            preparedStmt.executeUpdate();
 
             ResultSet u = preparedStmt.executeQuery();
 
@@ -117,8 +116,58 @@ public class Database {
         }
     }
 
+    public int getGameId(String gameName) {
+        int id;
+
+        String queryId = "SELECT id FROM games WHERE name= ? ";
+
+        try (PreparedStatement preparedStmt = getConnection().prepareStatement(queryId)) {
+
+            preparedStmt.setString(1, gameName);
+
+            ResultSet g = preparedStmt.executeQuery();
+
+            if (g.next()) {
+
+                id = g.getInt("id");
+
+                return id;
+            }
+
+            throw new SQLException("Game does not exists");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateScores(User user, String game, int gamesNum, int winsNum, float rate) {
+        int userId = getUserId(user);
+
+        int gameId = getGameId(game);
+
+        String query = "INSERT INTO scores VALUES(?,?,?,?,?)";
+
+        try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
+
+            preparedStmt.setInt(1, userId);
+            preparedStmt.setInt(2, gameId);
+            preparedStmt.setInt(3, gamesNum);
+            preparedStmt.setInt(4, winsNum);
+            preparedStmt.setFloat(5, rate);
+
+            preparedStmt.executeUpdate();
+
+        } catch (SQLException e) {
+            //   e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public void saveRate(User user, float rate) {
-        int id = getUserID(user);
+        int id = getUserId(user);
 
         String saveRate = "UPDATE scores SET rate = ? WHERE userId = ? ";
 

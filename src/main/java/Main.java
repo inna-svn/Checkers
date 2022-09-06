@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ public class Main {
 //            signInError.printStackTrace();
 //        }
         //   User newUser = new User("");
+        System.out.println(""+ Game.class.getName());
+
         User existingUser = null;
         try {
             existingUser = User.signIn("new", "123");
