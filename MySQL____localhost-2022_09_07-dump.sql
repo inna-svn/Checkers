@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `games`;
 CREATE TABLE `games` (
   `id` int NOT NULL,
   `name` varchar(10) NOT NULL,
-  PRIMARY KEY (`id`,`name`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -48,9 +48,8 @@ DROP TABLE IF EXISTS `scores`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `scores` (
   `userId` int NOT NULL,
-  `score` int DEFAULT '0',
   `gameId` int DEFAULT NULL,
-  `gameNum` int DEFAULT NULL,
+  `gamesNum` int DEFAULT NULL,
   `winsNum` int DEFAULT NULL,
   `rate` float DEFAULT NULL,
   PRIMARY KEY (`userId`)
@@ -75,11 +74,11 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `userName` varchar(100) DEFAULT NULL,
-  `password` varchar(50) DEFAULT NULL,
+  `userName` varchar(100) NOT NULL,
+  `password` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_userName_uindex` (`userName`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,4 +100,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-08-30 18:03:35
+-- Dump completed on 2022-09-07 10:03:37

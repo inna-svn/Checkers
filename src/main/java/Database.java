@@ -55,7 +55,6 @@ public class Database {
             preparedStmt.executeUpdate();
 
         } catch (SQLException e) {
-            //   e.printStackTrace();
             throw new User.SignUpError(e.toString());
         }
     }
@@ -143,7 +142,7 @@ public class Database {
         }
     }
 
-    public void updateScores(User user, String game, int gamesNum, int winsNum, float rate) {
+    public void createScore(User user, String game, int gamesNum, int winsNum, float rate) {
         int userId = getUserId(user);
 
         int gameId = getGameId(game);
@@ -161,7 +160,6 @@ public class Database {
             preparedStmt.executeUpdate();
 
         } catch (SQLException e) {
-            //   e.printStackTrace();
             throw new RuntimeException(e);
         }
 

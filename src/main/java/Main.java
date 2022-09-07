@@ -1,4 +1,3 @@
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,40 +6,6 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-//        User newUser = new User("meirav");
-//        UserGameScore gss = new UserGameScore(newUser,CheckersGame.class,3,4,4/3);
-//        gss.computeRate();
-//        try {
-//            User activeUser = new User("inna");
-//            activeUser=User.signIn("Meirav", "98745");
-//            System.out.println(activeUser.toString());
-//        } catch (User.SignInError signInError) {
-//            signInError.printStackTrace();
-//        }
-        //   User newUser = new User("");
-        System.out.println(""+ Game.class.getName());
-
-        User existingUser = null;
-        try {
-            existingUser = User.signIn("new", "123");
-            System.out.println("user: existingUser signed in");
-
-        } catch (User.SignInError signUpError) {
-            signUpError.printStackTrace();
-        }
-
-
-        try {
-            User.signUp("new1", "123");
-            User newUser = User.signIn("new1", "123");
-
-            System.out.println("user: newUser signed up");
-        } catch (User.SignUpError signUpError) {
-            signUpError.printStackTrace();
-        } catch (User.SignInError e) {
-            throw new RuntimeException(e);
-        }
-
 
         User activeUser = new User(3, "inna");
         User inactiveUser = new User(4, "ilya");
@@ -52,7 +17,6 @@ public class Main {
         //      g.makeMove(activeUser,new Move(new Location(2,4),new Location(3,3),null));
         //     g.makeMove(activeUser,new Move(new Location(3,3),new Location(4,2),null));
         //       g.makeMove(activeUser,new Move(new Location(3,3),new Location(4,4),null));
-//
         //     g.makeMove(activeUser,new Move(new Location(2,0),new Location(3,1),null));
         //    g.makeMove(activeUser,new Move(new Location(1,1),new Location(2,0),null));
 

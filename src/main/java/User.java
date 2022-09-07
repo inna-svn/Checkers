@@ -82,7 +82,7 @@ public class User {
             var score = new UserGameScore(this, gameClass, 0, 0, 0.0F);
             // TODO: Save score
 
-            Database.getDatabase().updateScores(this, gameClass.getName(), 0,0,0.0F);
+            Database.getDatabase().createScore(this, gameClass.getName(), 0,0,0.0F);
 
             return score;
         });
