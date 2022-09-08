@@ -46,11 +46,14 @@
     <script>
         function onMessage(message, channel, messageEvent) {
             console.debug('onMessage', message, channel, messageEvent);
-            window[message](...arguments);
+            // Expected functions:
+            // * renderList()
+            // * startGame(url)
+            window[message.func](...message.args);
         }
 
-        function startGame() {
-            
+        function startGame(url) {
+            window.location.href = url;
         }
     </script>
 

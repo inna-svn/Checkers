@@ -3,6 +3,9 @@ import jakarta.faces.push.Push;
 import jakarta.faces.push.PushContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 // https://github.dev/AnghelLeonard/JSF-2.3
 
@@ -15,31 +18,32 @@ public class LobbyEndpoint {
     private PushContext lobbyPushContext;
 
     @Inject
-    GameApplication gameApplication;
+    private GameEndpoint gameEndpoint;
+
+    @NotNull
+    private static List<String> getLobbyUserNames(Lobby lobby, Collection<User> users) {
+        var userNames = users.stream().map(User::getUsername).sorted().toList();
+        return userNames.stream().map(u -> lobby.getGameName() + '_' + u).toList();
+    }
+
 
     /**
      * Send event to each user in the lobby. The event triggers Ajax reload of lobby users list.
      */
-    public void sendLobby(Lobby lobby) {
+    public void onLobbyUserListChange(Lobby lobby) {
         // TODO: By user ID, not username
-        var userNames = lobby.getUsers().stream().map(User::getUsername).sorted().toList();
-        var websocketUsernames = userNames.stream().map(u -> lobby.getGameName() + '_' + u).toList();
-        lobbyPushContext.send("renderList", websocketUsernames);
+        var cmd = new HashMap<String, Object>();
+        cmd.put("func", "renderList");
+        cmd.put("args", new String[]{});
+        lobbyPushContext.send(cmd, getLobbyUserNames(lobby, lobby.getUsers()));
         // TODO: move this code somewhere else, it does not belong to sendLobby()
-        if(lobby.canStartGame()) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                if(lobby.canStartGame()) {
-                    Game game = gameApplication.startGame(lobby);
-                    // TODO: make /game/{id} URLs work
-                    // TODO: pass the new game URL so that the page could redirect to
-                    lobbyPushContext.send("startGame", websocketUsernames);
-                }
-            }).start();
-        }
+    }
+
+    public void startGame(Lobby lobby, Game game, Set<User> users) {
+        var cmd = new HashMap<String, Object>();
+        cmd.put("func", "startGame");
+        var id = gameEndpoint.idForGame(game);
+        cmd.put("args", new String[]{"game.xhtml?id=" + id});
+        lobbyPushContext.send(cmd, getLobbyUserNames(lobby, users));
     }
 }

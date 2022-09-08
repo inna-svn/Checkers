@@ -14,6 +14,9 @@ public class UserSession implements Serializable {
     @Inject
     LobbyEndpoint lobbyEndpoint;
 
+    @Inject
+    GameApplication gameApplication;
+
     private String username;
     private String password;
     private User user;
@@ -90,7 +93,24 @@ public class UserSession implements Serializable {
 
     public String joinLobby(Lobby lobby) {
         user.joinLobby(lobby);
-        lobbyEndpoint.sendLobby(lobby);
+        lobbyEndpoint.onLobbyUserListChange(lobby);
+        if(lobby.canStartGame()) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                if(lobby.canStartGame()) {
+                    var users = lobby.getUsers();
+                    Game game = gameApplication.startGame(lobby);
+                    // TODO: make /game/{id} URLs work
+                    // TODO: pass the new game URL so that the page could redirect to
+                    lobbyEndpoint.startGame(lobby, game, users);
+                }
+            }).start();
+        }
+
         return "lobby.xhtml?faces-redirect=true";
     }
 
