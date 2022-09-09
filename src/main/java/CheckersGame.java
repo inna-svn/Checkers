@@ -2,10 +2,8 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 
 public class CheckersGame implements Game {
@@ -14,6 +12,11 @@ public class CheckersGame implements Game {
 
     User activeUser, inactiveUser;
     Board board = new Board();
+
+    // Should be on Game.getName but there is a bug - https://github.com/jakartaee/expression-language/issues/43
+    public String getName() {
+        return NAME;
+    }
 
     @Override
     public void start(@NotNull User user1, @NotNull User user2) {

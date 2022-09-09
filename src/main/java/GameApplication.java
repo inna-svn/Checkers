@@ -18,6 +18,7 @@ public class GameApplication {
     public Game startGame(@NotNull Lobby lobby) {
         Preconditions.checkState(lobby.canStartGame());
         var users = lobby.startGame();
+        users.forEach(u -> u.partLobby(lobby));
         var gameClass = lobby.getGameClass();
         Game game;
         try {

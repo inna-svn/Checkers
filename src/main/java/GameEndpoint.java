@@ -1,8 +1,11 @@
+import com.google.common.base.Preconditions;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.push.Push;
 import jakarta.faces.push.PushContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,4 +28,22 @@ public class GameEndpoint {
         idsToGames.put(id, game);
         return id;
     }
+
+    synchronized public Game gameForId(@NotNull String id) {
+        Preconditions.checkNotNull(id);
+        Game game = idsToGames.get(id);
+        Preconditions.checkNotNull(game);
+        return game;
+    }
+
+    public Game getGame() {
+        var gameId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("id");
+        return gameForId(gameId);
+    }
+
+    public Board getBoard(User perspectiveOfUser) {
+        // TODO: perspective - flip when necessary
+        return getGame().getBoard();
+    }
+
 }

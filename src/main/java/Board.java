@@ -1,6 +1,9 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
     public static final int SIZE = 8;
     Piece[][] board;
@@ -31,5 +34,19 @@ public class Board {
 
     public void makeMove(@NotNull Move move) {
 
+    }
+
+    public List<List<Piece>> getAllPiecesInRowsAndColumns() {
+        List<List<Piece>> rows = new ArrayList<>(SIZE);
+        List<Piece> rowPieces;
+
+        for (int row = 0; row < SIZE; row++) {
+            rowPieces = new ArrayList<>(SIZE);
+            for (int col = 0; col < SIZE; col++) {
+                rowPieces.add(getPiece(new Location(row, col))); // XXX: inverse row & col
+            }
+            rows.add(rowPieces);
+        }
+        return rows;
     }
 }

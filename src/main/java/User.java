@@ -91,6 +91,11 @@ public class User {
         lobbies.add(lobby);
     }
 
+    void partLobby(@NotNull Lobby lobby) {
+        // lobby.removeUser(this);
+        lobbies.remove(lobby);
+    }
+
     void abandonActiveGame() {
         if (activeGame != null) {
             activeGame.abandon(this);
