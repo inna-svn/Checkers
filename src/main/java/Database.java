@@ -43,43 +43,38 @@ public class Database {
         return connection;
     }
 
-    public void createUser(String username, String password) throws User.SignUpError {
-
+    
+    public User userSignUp(String username, String password) throws User.SignUpError {
+        User user;
         String query = "INSERT INTO users(userName,password) VALUES(?,?)";
 
         try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
-
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
-
-            preparedStmt.executeUpdate();
-
+            ResultSet u = preparedStmt.executeQuery();
+            if (u.next()) {
+                user = new User(u.getInt("id"), username);
+                return user;
+            }
+            throw new User.SignUpError("User not found or password does not match");
         } catch (SQLException e) {
             throw new User.SignUpError(e.toString());
         }
     }
 
     public User userSignIn(String username, String password) throws User.SignInError {
-
         User user;
-
         String query = "SELECT * FROM users WHERE userName=? AND password=? limit 1";
 
         try {
             try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
-
                 preparedStmt.setString(1, username);
                 preparedStmt.setString(2, password);
-
                 ResultSet u = preparedStmt.executeQuery();
-
                 if (u.next()) {
-
                     user = new User(u.getInt("id"), username);
-
                     return user;
                 }
-
                 throw new User.SignInError("User not found or password does not match");
             }
         } catch (SQLException e) {
@@ -88,95 +83,70 @@ public class Database {
         }
     }
 
-    public int getUserId(User user) {
-        int id;
-
-        String username = user.getUsername();
-
-        String queryId = "SELECT id FROM users WHERE userName= ? ";
-
+    public int getId(String queryId, String queryParameter, String objectName) {
         try (PreparedStatement preparedStmt = getConnection().prepareStatement(queryId)) {
-
-            preparedStmt.setString(1, username);
-
+            preparedStmt.setString(1, queryParameter);
             ResultSet u = preparedStmt.executeQuery();
-
             if (u.next()) {
-
-                id = u.getInt("id");
-
-                return id;
+                return u.getInt("id");
             }
-
-            throw new SQLException("User does not exists");
-
+            throw new SQLException(objectName + " does not exists");
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    public int getUserId(User user) {
+        return getId("SELECT id FROM users WHERE userName= ? ", user.getUsername(), "User");
     }
 
     public int getGameId(String gameName) {
-        int id;
-
-        String queryId = "SELECT id FROM games WHERE name= ? ";
-
-        try (PreparedStatement preparedStmt = getConnection().prepareStatement(queryId)) {
-
-            preparedStmt.setString(1, gameName);
-
-            ResultSet g = preparedStmt.executeQuery();
-
-            if (g.next()) {
-
-                id = g.getInt("id");
-
-                return id;
-            }
-
-            throw new SQLException("Game does not exists");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        return getId("SELECT id FROM games WHERE name= ? ", gameName, "Game");
     }
 
-    public void createScore(User user, String game, int gamesNum, int winsNum, float rate) {
+    public void createScore(User user, Class<? extends Game> gameClass, int gamesNum, int winsNum, float rate) {
         int userId = getUserId(user);
-
-        int gameId = getGameId(game);
+        int gameId;
+        try {
+            gameId = getGameId(gameClass.getField("NAME").get(null).toString());
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
 
         String query = "INSERT INTO scores VALUES(?,?,?,?,?)";
 
         try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
-
             preparedStmt.setInt(1, userId);
             preparedStmt.setInt(2, gameId);
             preparedStmt.setInt(3, gamesNum);
             preparedStmt.setInt(4, winsNum);
             preparedStmt.setFloat(5, rate);
-
             preparedStmt.executeUpdate();
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public void saveRate(User user, float rate) {
-        int id = getUserId(user);
+    public void updateScores(User user, Class<? extends Game> gameClass, int gamesNum, int winsNum, float rate) {
+        int userId = getUserId(user);
+        int gameId;
+        try {
+            gameId = getGameId(gameClass.getField("NAME").get(null).toString());
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
 
-        String saveRate = "UPDATE scores SET rate = ? WHERE userId = ? ";
+        String updScores = "UPDATE scores SET gamesNum = ? , winsNum = ? , rate = ? WHERE userId = ? AND gameId = ?";
 
-        try (PreparedStatement preparedUpdate = getConnection().prepareStatement(saveRate)) {
-
-            preparedUpdate.setFloat(1, rate);
-            preparedUpdate.setInt(2, id);
-
+        try (PreparedStatement preparedUpdate = getConnection().prepareStatement(updScores)) {
+            preparedUpdate.setInt(1, gamesNum);
+            preparedUpdate.setInt(2, winsNum);
+            preparedUpdate.setFloat(3, rate);
+            preparedUpdate.setInt(4, userId);
+            preparedUpdate.setInt(5, gameId);
             preparedUpdate.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

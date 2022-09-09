@@ -38,13 +38,14 @@ public class User {
         }
     }
 
-    static void signUp(@NotNull String username, @NotNull String password) throws SignUpError {
+    static User signUp(@NotNull String username, @NotNull String password) throws SignUpError {
 //        throw new SignUpError("Password is too short");
         // TODO: Validation
-
+        User user;
         //create user in DB only
-        Database.getDatabase().createUser(username, password);
+        user = Database.getDatabase().userSignUp(username, password);
 
+        return user;
     }
 
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
@@ -82,7 +83,7 @@ public class User {
             var score = new UserGameScore(this, gameClass, 0, 0, 0.0F);
             // TODO: Save score
 
-            Database.getDatabase().createScore(this, gameClass.getName(), 0,0,0.0F);
+            Database.getDatabase().createScore(this, gameClass, 0, 0, 0.0F);
 
             return score;
         });
