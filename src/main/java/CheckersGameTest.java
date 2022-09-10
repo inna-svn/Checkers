@@ -1,6 +1,4 @@
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.List;
 import java.util.Map;
@@ -12,11 +10,10 @@ class CheckersGameTest {
     User inactiveUser;
 
 
-  //  @BeforeAll
     @org.junit.jupiter.api.Test
     public void setUp()  {
-        activeUser = new User("inna");
-        inactiveUser = new User("ilya");
+        activeUser = new User(1, "inna");
+        inactiveUser = new User(2, "ilya");
         game = new CheckersGame();
         game.start(activeUser, inactiveUser);
     }
