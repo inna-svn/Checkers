@@ -73,6 +73,13 @@ public class GameEndpoint {
             }
             rows.add(rowPieces);
         }
+
+        // Rotate the board representation for the second player
+        if(getGame().getBlackUser().equals(perspectiveOfUser)) {
+            Collections.reverse(rows);
+            rows.forEach(Collections::reverse);
+        }
+
         return rows;
     }
 

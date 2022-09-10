@@ -54,6 +54,16 @@ public class CheckersGame implements Game {
     }
 
     @Override
+    public User getBlackUser() {
+        return blackUser;
+    }
+
+    @Override
+    public User getWhiteUser() {
+        return whiteUser;
+    }
+
+    @Override
     public Map<Piece, List<Move>> listPossibleMoves() {
         Preconditions.checkState(status == Status.IN_PROGRESS);
         Map<Piece, List<Move>> currMap = new HashMap<>();
