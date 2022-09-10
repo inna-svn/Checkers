@@ -63,6 +63,9 @@
         </ui:repeat>
     </table>
 
+    <h:outputText rendered="${gameEndpoint.game.activeUser == userSession.user}">
+        your turn
+    </h:outputText>
 
 </h:body>
 </html>
