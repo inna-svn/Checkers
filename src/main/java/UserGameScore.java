@@ -13,6 +13,7 @@ public final class UserGameScore {
         this.gamesNum = gamesNum;
         this.winsNum = winsNum;
         this.rate = rate;
+
     }
 
     public User getUser() {
@@ -44,6 +45,8 @@ public final class UserGameScore {
             winsNum += 1;
         }
         computeRate();
+
+        Database.getDatabase().updateScores(user, gameClass, winsNum, gamesNum, rate);
     }
 
     void computeRate() {
