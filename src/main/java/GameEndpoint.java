@@ -7,9 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Named
 @ApplicationScoped
@@ -19,8 +17,28 @@ public class GameEndpoint {
     @Push(channel = "game")
     private PushContext gamePushContext;
 
-    Map <Game, String> gamesToIds = new HashMap<>();
-    Map <String, Game> idsToGames = new HashMap<>();
+    Map<Game, String> gamesToIds = new HashMap<>();
+    Map<String, Game> idsToGames = new HashMap<>();
+
+    public static final class BoardLocation {
+
+        public final Location location;
+        public final Piece piece;
+
+        BoardLocation(Location location, Piece piece) {
+            this.location = location;
+            this.piece = piece;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public Piece getPiece() {
+            return piece;
+        }
+
+    }
 
     synchronized public String idForGame(Game game) {
         gamesToIds.computeIfAbsent(game, g -> UUID.randomUUID().toString());
@@ -41,9 +59,21 @@ public class GameEndpoint {
         return gameForId(gameId);
     }
 
-    public Board getBoard(User perspectiveOfUser) {
-        // TODO: perspective - flip when necessary
-        return getGame().getBoard();
+    public List<List<BoardLocation>> getBoardLocations(User perspectiveOfUser) {
+        List<List<BoardLocation>> rows = new ArrayList<>(Board.SIZE);
+        List<BoardLocation> rowPieces;
+
+        Board board = getGame().getBoard();
+
+        for (int row = 0; row < Board.SIZE; row++) {
+            rowPieces = new ArrayList<>(Board.SIZE);
+            for (int col = 0; col < Board.SIZE; col++) {
+                Location location = new Location(row, col); // XXX: inverse row & col
+                rowPieces.add(new BoardLocation(location, board.getPiece(location)));
+            }
+            rows.add(rowPieces);
+        }
+        return rows;
     }
 
 }

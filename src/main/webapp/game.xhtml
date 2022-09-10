@@ -8,6 +8,8 @@
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <title><ui:insert name="title">Checkers</ui:insert></title>
+    <!-- Does not work. To fix.  -->
+<!--    <h:outputStylesheet library="css" name="main.css" />-->
 </h:head>
 <h:body>
 
@@ -30,23 +32,22 @@
     </script>
 
     <h2>Board</h2>
-    <table>
-        <ui:repeat value="${gameEndpoint.getBoard(userSession.user).allPiecesInRowsAndColumns}" var="row">
+    <table class="board">
+        <ui:repeat value="#{gameEndpoint.getBoardLocations(userSession.user)}" var="row">
             <tr>
-                <ui:repeat value="${row}" var="piece">
-                    <td>
-                        <h:outputText rendered="${piece == null}">
+                <ui:repeat value="${row}" var="bl">
+                    <td class="#{bl.location.color}-background">
+                        <h:outputText rendered="${bl.piece == null}">
                             -
                         </h:outputText>
-                        <h:outputText rendered="${piece != null}">
-                            ${piece.color}
+                        <h:outputText rendered="${bl.piece != null}">
+                            ${bl.piece.color}
                         </h:outputText>
                     </td>
                 </ui:repeat>
             </tr>
         </ui:repeat>
     </table>
-<!--    </table>-->
 
 
 </h:body>

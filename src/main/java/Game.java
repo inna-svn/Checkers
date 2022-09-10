@@ -9,6 +9,7 @@ import java.util.Map;
 public interface Game {
 
     String NAME = null;
+    String getName();
 
     enum Status {
         IN_PROGRESS,
