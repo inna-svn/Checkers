@@ -50,17 +50,13 @@ public class UserSession implements Serializable {
     void signUp() {
         try {
 
-            User.signUp(username, password);
-
-            user = User.signIn(username, password);
+            user = User.signUp(username, password);
 
             errorMessage = null;
 
         } catch (User.SignUpError e) {
             errorMessage = e.getMessage();
 
-        } catch (User.SignInError e) {
-            errorMessage = e.getMessage();
         }
         // TODO: Check if any lobby has enough players to start
         //       The lobby where u joined might be ready.

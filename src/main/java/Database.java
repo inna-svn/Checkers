@@ -43,11 +43,8 @@ public class Database {
         return connection;
     }
 
-    
-    public User userSignUp(String username, String password) throws User.SignUpError {
+    public User createUser(String query, String username, String password) throws SQLException {
         User user;
-        String query = "INSERT INTO users(userName,password) VALUES(?,?)";
-
         try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
@@ -56,30 +53,27 @@ public class Database {
                 user = new User(u.getInt("id"), username);
                 return user;
             }
-            throw new User.SignUpError("User not found or password does not match");
         } catch (SQLException e) {
-            throw new User.SignUpError(e.toString());
+            e.printStackTrace();
+        }
+        throw new SQLException("User not found or password does not match");
+    }
+
+    public User userSignUp(String username, String password) throws User.SignUpError {
+        String query = "INSERT INTO users(userName,password) VALUES(?,?)";
+        try {
+            return createUser(query, username, password);
+        } catch (SQLException e) {
+            throw new User.SignUpError("User not found or password does not match");
         }
     }
 
     public User userSignIn(String username, String password) throws User.SignInError {
-        User user;
         String query = "SELECT * FROM users WHERE userName=? AND password=? limit 1";
-
         try {
-            try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
-                preparedStmt.setString(1, username);
-                preparedStmt.setString(2, password);
-                ResultSet u = preparedStmt.executeQuery();
-                if (u.next()) {
-                    user = new User(u.getInt("id"), username);
-                    return user;
-                }
-                throw new User.SignInError("User not found or password does not match");
-            }
+            return createUser(query, username, password);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new User.SignInError(e.toString());
+            throw new User.SignInError("User not found or password does not match");
         }
     }
 
