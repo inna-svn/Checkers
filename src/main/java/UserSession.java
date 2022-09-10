@@ -1,5 +1,6 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
@@ -9,6 +10,12 @@ import java.util.Collection;
 @ManagedBean
 @Named
 public class UserSession implements Serializable {
+
+    @Inject
+    LobbyEndpoint lobbyEndpoint;
+
+    @Inject
+    GameApplication gameApplication;
 
     private String username;
     private String password;
@@ -94,6 +101,24 @@ public class UserSession implements Serializable {
 
     public String joinLobby(Lobby lobby) {
         user.joinLobby(lobby);
+        lobbyEndpoint.onLobbyUserListChange(lobby);
+        if(lobby.canStartGame()) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                if(lobby.canStartGame()) {
+                    var users = lobby.getUsers();
+                    Game game = gameApplication.startGame(lobby);
+                    // TODO: make /game/{id} URLs work
+                    // TODO: pass the new game URL so that the page could redirect to
+                    lobbyEndpoint.startGame(lobby, game, users);
+                }
+            }).start();
+        }
+
         return "lobby.xhtml?faces-redirect=true";
     }
 

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title><ui:insert name="title">Checkers</ui:insert></title>
+</h:head>
+<h:body>
+
+    <h1>Playing #{userSession.lobby.gameName}</h1>
+
+
+    <!-- https://javaee.github.io/tutorial/jsf-ws003.html -->
+    <!-- https://javaee.github.io/javaee-spec/javadocs/javax/faces/push/Push.html -->
+    <!-- TOOD: By game ID and user ID, not game name and user name -->
+    <!-- Warning: ajax tag does not work -->
+    <f:websocket channel="game" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage" />
+
+    <script>
+        // WIP
+        function onMessage(message, channel, messageEvent) {
+            console.debug('onMessage', message, channel, messageEvent);
+            window[message.func](...message.args);
+        }
+
+    </script>
+
+
+</h:body>
+</html>
