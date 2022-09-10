@@ -1,3 +1,21 @@
-.board td {
-    padding: 0.5em;
+td {
+
+padding: 0.5em;
+border: 1px solid gray;
+width:25px;height: 25px;
+
+}
+
+.WHITE-background {
+
+background-color: white;
+color: black;
+
+}
+
+.BLACK-background {
+
+background-color: black;
+color: white;
+
 }
