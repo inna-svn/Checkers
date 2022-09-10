@@ -7,6 +7,7 @@
 * Lobby per game type
 * A user is automatically added to the only lobby we have (the checkers game lobby)
 * `Java 18`, seems to work OK
+* `MySQL Server 8.0.29` is tested and working. Latest available release `8.0.30`
 * `Jakarta EE 9.1` because that's the latest version supported by TomEE and Glassfish
 * `TomEE` because there is [TomEE Maven Plugin](https://tomee.apache.org/tomee-maven-plugin.html) that does "Easy provisioning of a TomEE server"
 
@@ -22,6 +23,21 @@ How to install - whatever works for your platform.
 ### Install Maven
 
 How to install - whatever works for your platform.
+
+### Install MySQL Server
+
+Version 8.0.29
+
+How to install - whatever works for your platform.
+
+Configure the server connection via IDE:
+
+    Host: localhost
+    Port: 3306
+    Authentication: User&Password
+    User: root
+    Password: zubur1
+    URL: jdbc:mysql://localhost:3306
 
 ### Install TomEE
 

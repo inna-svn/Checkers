@@ -45,7 +45,6 @@ public class CheckersPiece implements Piece {
                 moves.add(new Move(initalLocation, captureLocation, getCopyOfIntermidiates(intermediates)));
                 //intermediates.clear();
                 intermediates.remove(captureLocation);
-                //System.out.println("x: " + location.x() + ", y: " + location.y() + ", Move: " );
             }
             else {
                 moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates, initalLocation);
@@ -61,7 +60,6 @@ public class CheckersPiece implements Piece {
                 moves.add(new Move(initalLocation, captureLocation, getCopyOfIntermidiates(intermediates)));
                 //intermediates.clear();
                 intermediates.remove(captureLocation);
-                //System.out.println("x: " + location.x() + ", y: " + location.y() + ", Move: " );
             }
             else {
                 moves = listPossibleCaptures(colorMod, moves, captureLocation, intermediates, initalLocation);

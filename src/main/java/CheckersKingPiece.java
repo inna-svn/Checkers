@@ -102,7 +102,6 @@ public class CheckersKingPiece extends CheckersPiece {
         }
         ;
         Location captureLocation = new Location(currLocation.x() + 1, currLocation.y() + 1);
-        System.out.println("currlocation" + currLocation);
 
         return (!capturedPieces.contains(captureLocation) &&
                 !isCellEmpty(currLocation, 1, 1) &&
@@ -124,7 +123,6 @@ public class CheckersKingPiece extends CheckersPiece {
     }
 
     private boolean isCellEmpty(Location location, int directionX, int directionY) {
-        System.out.println("loc" + (new Location(location.x() + directionX, location.y() + directionY)));
         return this.board.getPiece(new Location(location.x() + directionX, location.y() + directionY)) == null;
     }
 

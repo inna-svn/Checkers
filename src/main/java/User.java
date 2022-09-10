@@ -1,27 +1,25 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 public class User {
-
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
     Game activeGame = null;
     Set<Lobby> lobbies = new HashSet<>();
-    private String username;
     private int id;
-    //private final String username;
+    private final String username;
 
-    static User testUser1 = new User("test1");
-    static User testUser2 = new User("test2");
+    static User testUser1 = new User(55, "test1");
+    static User testUser2 = new User(56, "test2");
 
-    public User(String username) {
+    public User(int id, String username) {
+        this.id = id;
         this.username = username;
-       // this.id = id;
+    }
 
+    public int getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -42,48 +40,24 @@ public class User {
 
     static User signUp(@NotNull String username, @NotNull String password) throws SignUpError {
 //        throw new SignUpError("Password is too short");
-        // TODO: Also log the user in
         // TODO: Validation
+        User user;
+        //create user in DB only
+        user = Database.getDatabase().userSignUp(username, password);
 
-        try {
-            try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("INSERT INTO users(userName,password) VALUES(?,?)")) {
-                preparedStmt.setString(1, username);
-                preparedStmt.setString(2, password);
-                preparedStmt.executeUpdate();
-                // TODO: Separate handling of (A) duplicate username and (B) any other SQL error
-            }
-            return User.signIn(username,password);
-        } catch (SQLException | SignInError exception) {
-            exception.printStackTrace();
-            throw new SignUpError("User with the given username already exists OR database error");
-        }
+        return user;
     }
 
     static User signIn(@NotNull String username, @NotNull String password) throws SignInError {
-        // Lookup the User in the DB
-        User user = null;
+        User user;
         if (username.equals("test1") && password.equals("test1")) {
             return testUser1;
         }
         if (username.equals("test2") && password.equals("test2")) {
             return testUser2;
         }
-        try {
-            ResultSet u;
-            try (PreparedStatement preparedStmt = Database.getDatabase().getConnection().prepareStatement("SELECT * FROM users WHERE userName=? AND password=? limit 1")) {
-                preparedStmt.setString(1, username);
-                preparedStmt.setString(2, password);
-                u = preparedStmt.executeQuery();
-            }
-            if(u.next()) {
-                // TODO: User.id
-                return new User(u.getString("userName"));
-            }
-            throw new SignInError("User not found or password does not match");
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-            throw new SignInError("Database Failure");
-        }
+        user = Database.getDatabase().userSignIn(username, password);
+        return user;
     }
 
     void joinLobby(@NotNull Lobby lobby) {
@@ -103,9 +77,18 @@ public class User {
         abandonActiveGame();
     }
 
-    UserGameScore scoreForGame(Class<? extends Game> gameClass, Game.Outcome outcome) {
-        // TODO: Check in database first
-        return scores.computeIfAbsent(gameClass, c -> new UserGameScore(this, gameClass, 0, 0, 0.0F));
+    UserGameScore scoreForGame(Class<? extends Game> gameClass) {
+        // TODO: Check in database first, if exists in DB - return that
+
+        return scores.computeIfAbsent(gameClass, c -> {
+            var score = new UserGameScore(this, gameClass, 0, 0, 0.0F);
+            // TODO: Save score
+
+            Database.getDatabase().createScore(this, gameClass, 0, 0, 0.0F);
+
+            return score;
+        });
+
     }
 
     /**
