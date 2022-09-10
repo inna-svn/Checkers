@@ -16,6 +16,11 @@ public class CheckersGame implements Game {
     User blackUser , whiteUser;
     Board board = new Board();
 
+    // Should be on Game.getName but there is a bug - https://github.com/jakartaee/expression-language/issues/43
+    public String getName() {
+        return NAME;
+    }
+
     @Override
     public void start(@NotNull User user1, @NotNull User user2) {
         activeUser = user1;
@@ -45,6 +50,16 @@ public class CheckersGame implements Game {
     @Override
     public User getActiveUser() {
         return activeUser;
+    }
+
+    @Override
+    public User getBlackUser() {
+        return blackUser;
+    }
+
+    @Override
+    public User getWhiteUser() {
+        return whiteUser;
     }
 
     @Override
