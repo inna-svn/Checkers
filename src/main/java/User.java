@@ -43,7 +43,7 @@ public class User {
         // TODO: Validation
         User user;
         //create user in DB only
-        user = Database.getDatabase().userSignUp(username, password);
+        user = Database.getDatabase().createUser(username, password);
 
         return user;
     }
@@ -56,7 +56,7 @@ public class User {
         if (username.equals("test2") && password.equals("test2")) {
             return testUser2;
         }
-        user = Database.getDatabase().userSignIn(username, password);
+        user = Database.getDatabase().checkUser(username, password);
         return user;
     }
 
@@ -80,14 +80,18 @@ public class User {
     UserGameScore scoreForGame(Class<? extends Game> gameClass) {
         // TODO: Check in database first, if exists in DB - return that
 
-        return scores.computeIfAbsent(gameClass, c -> {
-            var score = new UserGameScore(this, gameClass, 0, 0, 0.0F);
-            // TODO: Save score
+        UserGameScore userScore = Database.getDatabase().checkScore(this, gameClass);
+        if (userScore != null)
+            return userScore;
+        else {
+            return scores.computeIfAbsent(gameClass, c -> {
+                var score = new UserGameScore(this, gameClass, 0, 0, 0.0F);
 
-            Database.getDatabase().createScore(this, gameClass, 0, 0, 0.0F);
+                Database.getDatabase().createScore(this, gameClass, 0, 0, 0.0F);
 
-            return score;
-        });
+                return score;
+            });
+        }
 
     }
 
