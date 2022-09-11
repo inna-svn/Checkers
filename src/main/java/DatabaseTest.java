@@ -1,8 +1,5 @@
-import jakarta.transaction.Transactional;
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 
 import java.sql.SQLException;
@@ -55,17 +52,10 @@ public class DatabaseTest {
         try {
             userTest1 = User.signUp("test1", "12345");
             userTest2 = User.signUp("test2", "12345");
-//            Database.getDatabase().createScore(userTest1, Game.class.getClass().newInstance(), 3, 3, 1);
-//            Database.getDatabase().updateScore(userTest2, Game.class, 2,1,1/2);
-//            Database.getDatabase().getScore(userTest1, Game.class);
+            Assertions.assertEquals(userTest1.scoreForGame(CheckersGame.class).getWinsNum(),0);
         } catch (User.SignUpError | RuntimeException e) {
             throw new RuntimeException(e);
         }
-//        Assertions.assertEquals(Database.getDatabase().getScore(userTest1, Game.class),Database.getDatabase().getScore(userTest1, Game.class));
     }
-
-
-
-
 
 }

@@ -78,8 +78,7 @@ public class User {
     }
 
     UserGameScore scoreForGame(Class<? extends Game> gameClass) {
-        // TODO: Check in database first, if exists in DB - return that
-
+        // Check in database, if exists in DB - return that
         UserGameScore userScore = Database.getDatabase().getScore(this, gameClass);
         if (userScore != null)
             return userScore;

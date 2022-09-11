@@ -168,8 +168,8 @@ public class Database {
         String query = "SELECT * FROM scores WHERE userId = ? AND gameId = ?";
 
         try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
-            preparedStmt.setInt(4, userId);
-            preparedStmt.setInt(5, gameId);
+            preparedStmt.setInt(1, userId);
+            preparedStmt.setInt(2, gameId);
             ResultSet u = preparedStmt.executeQuery();
             if (u.next()) {
 
