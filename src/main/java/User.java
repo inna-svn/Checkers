@@ -56,7 +56,7 @@ public class User {
         if (username.equals("test2") && password.equals("test2")) {
             return testUser2;
         }
-        user = Database.getDatabase().checkUser(username, password);
+        user = Database.getDatabase().getUser(username, password);
         return user;
     }
 
@@ -80,7 +80,7 @@ public class User {
     UserGameScore scoreForGame(Class<? extends Game> gameClass) {
         // TODO: Check in database first, if exists in DB - return that
 
-        UserGameScore userScore = Database.getDatabase().checkScore(this, gameClass);
+        UserGameScore userScore = Database.getDatabase().getScore(this, gameClass);
         if (userScore != null)
             return userScore;
         else {

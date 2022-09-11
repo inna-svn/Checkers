@@ -43,15 +43,17 @@ public class Database {
         return connection;
     }
 
-    private User makeUserObj(String query, String username, String password) throws SQLException {
-        User user;
+    private User makeUserObj(String username, String password) throws SQLException {
+        String query = "SELECT * FROM users WHERE userName=? AND password=? limit 1";
+
         try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
             preparedStmt.setString(1, username);
             preparedStmt.setString(2, password);
             ResultSet u = preparedStmt.executeQuery();
             if (u.next()) {
-                user = new User(u.getInt("id"), username);
-                return user;
+
+                return new User(u.getInt("id"), username);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -61,19 +63,26 @@ public class Database {
 
     public User createUser(String username, String password) throws User.SignUpError {
         String query = "INSERT INTO users(userName,password) VALUES(?,?)";
-        try {
-            return makeUserObj(query, username, password);
+
+        try (PreparedStatement preparedStmt = getConnection().prepareStatement(query)) {
+            preparedStmt.setString(1, username);
+            preparedStmt.setString(2, password);
+            preparedStmt.executeUpdate();
+
+            return makeUserObj(username, password);
+
         } catch (SQLException e) {
-            throw new User.SignUpError("User not found or password does not match");
+            throw new User.SignUpError(e.toString());
         }
     }
 
-    public User checkUser(String username, String password) throws User.SignInError {
-        String query = "SELECT * FROM users WHERE userName=? AND password=? limit 1";
+    public User getUser(String username, String password) throws User.SignInError {
         try {
-            return makeUserObj(query, username, password);
+
+            return makeUserObj(username, password);
+
         } catch (SQLException e) {
-            throw new User.SignInError("User not found or password does not match");
+            throw new User.SignInError(e.toString());
         }
     }
 
@@ -147,8 +156,7 @@ public class Database {
         }
     }
 
-    public UserGameScore checkScore(User user, Class<? extends Game> gameClass) {
-        UserGameScore userScore;
+    public UserGameScore getScore(User user, Class<? extends Game> gameClass) {
         int userId = getUserId(user);
         int gameId;
         try {
@@ -164,8 +172,9 @@ public class Database {
             preparedStmt.setInt(5, gameId);
             ResultSet u = preparedStmt.executeQuery();
             if (u.next()) {
-                userScore = new UserGameScore(user, gameClass, u.getInt("gamesNum"), u.getInt("winsNum"), u.getFloat("rate"));
-                return userScore;
+
+                return new UserGameScore(user, gameClass, u.getInt("gamesNum"), u.getInt("winsNum"), u.getFloat("rate"));
+
             } else {
                 return null;
             }
