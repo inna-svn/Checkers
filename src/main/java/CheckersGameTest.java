@@ -11,9 +11,17 @@ class CheckersGameTest {
 
 
     @org.junit.jupiter.api.Test
-    public void setUp()  {
-        activeUser = new User(1, "inna");
-        inactiveUser = new User(2, "ilya");
+    public void setUp() {
+        try {
+            activeUser = User.signIn("inna", "12345");
+        } catch (User.SignInError e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            inactiveUser = User.signIn("ilya", "12345");
+        } catch (User.SignInError e) {
+            throw new RuntimeException(e);
+        }
         game = new CheckersGame();
         game.start(activeUser, inactiveUser);
     }
@@ -35,34 +43,36 @@ class CheckersGameTest {
     @org.junit.jupiter.api.Test
     void listPossibleMovesWithSingleCapture() {
         setUp();
-        Map<Piece, List<Move>> currMapp ;
+        Map<Piece, List<Move>> currMapp;
         game.makeMove(activeUser, new Move(new Location(5, 6), new Location(4, 7), null));
         game.makeMove(activeUser, new Move(new Location(4, 7), new Location(3, 6), null));
         currMapp = game.listPossibleMoves();
-        List<Move> moves_1 = currMapp.get(game.getBoard().getPiece(new Location(2,7)));
-        List<Move> moves_2 = currMapp.get(game.getBoard().getPiece(new Location(2,5)));
-        Assertions.assertEquals(moves_1.get(0).start(),new Location(2,7));
-        Assertions.assertEquals(moves_1.get(0).end(),new Location(4,5));
-        Assertions.assertEquals(moves_1.get(0).intermediates().get(0),new Location(4,5));
-        Assertions.assertEquals(moves_2.get(1).start(),new Location(2,5));
-        Assertions.assertEquals(moves_2.get(1).end(),new Location(4,7));
+        List<Move> moves_1 = currMapp.get(game.getBoard().getPiece(new Location(2, 7)));
+        List<Move> moves_2 = currMapp.get(game.getBoard().getPiece(new Location(2, 5)));
+        Assertions.assertEquals(moves_1.get(0).start(), new Location(2, 7));
+        Assertions.assertEquals(moves_1.get(0).end(), new Location(4, 5));
+        Assertions.assertEquals(moves_1.get(0).intermediates().get(0), new Location(4, 5));
+        Assertions.assertEquals(moves_2.get(1).start(), new Location(2, 5));
+        Assertions.assertEquals(moves_2.get(1).end(), new Location(4, 7));
     }
+
     @org.junit.jupiter.api.Test
     void listPossibleMovesWithMultipleCapture() {
         setUp();
 
-        Map<Piece, List<Move>> currMapp ;
+        Map<Piece, List<Move>> currMapp;
         game.makeMove(activeUser, new Move(new Location(5, 6), new Location(4, 7), null));
         game.makeMove(activeUser, new Move(new Location(4, 7), new Location(3, 6), null));
         game.getBoard().removePiece(new Location(6, 3));
         currMapp = game.listPossibleMoves();
-        List<Move> moves = currMapp.get(game.getBoard().getPiece(new Location(2,7)));
-        Assertions.assertEquals(moves.get(0).start(),new Location(2,7));
-        Assertions.assertEquals(moves.get(0).end(),new Location(6,3));
-        Assertions.assertEquals(moves.get(0).intermediates().get(0),new Location(4,5));
-        Assertions.assertEquals(moves.get(0).intermediates().get(1),new Location(6,3));
+        List<Move> moves = currMapp.get(game.getBoard().getPiece(new Location(2, 7)));
+        Assertions.assertEquals(moves.get(0).start(), new Location(2, 7));
+        Assertions.assertEquals(moves.get(0).end(), new Location(6, 3));
+        Assertions.assertEquals(moves.get(0).intermediates().get(0), new Location(4, 5));
+        Assertions.assertEquals(moves.get(0).intermediates().get(1), new Location(6, 3));
 
     }
+
     @org.junit.jupiter.api.Test
     void makeMove() {
         setUp();
@@ -78,14 +88,14 @@ class CheckersGameTest {
     void doesWhiteHaveMoves() {
         setUp();
 
-        Map<Piece, List<Move>> currMapp ;
+        Map<Piece, List<Move>> currMapp;
         currMapp = game.listPossibleMoves();
         Assertions.assertTrue(game.doesWhiteHaveMoves(currMapp));
 
         //remove all white soldiers expect 2,7
         for (int row = 0; row < 3; row++) {
             for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
-                if (col !=7 || row !=2) game.getBoard().removePiece(new Location(row, col));
+                if (col != 7 || row != 2) game.getBoard().removePiece(new Location(row, col));
             }
         }
         currMapp = game.listPossibleMoves();
@@ -97,12 +107,13 @@ class CheckersGameTest {
         currMapp = game.listPossibleMoves();
         Assertions.assertFalse(game.doesWhiteHaveMoves(currMapp));
     }
+
     @org.junit.jupiter.api.Test
     void getWinner() {
         setUp();
-
+        activeUser.scoreForGame(CheckersGame.class);
+        inactiveUser.scoreForGame(CheckersGame.class);
         doesWhiteHaveMoves();
-        Assertions.assertEquals(game.getWinner().getUsername(),"ilya");
-
+        Assertions.assertEquals(game.getWinner().getUsername(), "ilya");
     }
 }

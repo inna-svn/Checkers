@@ -13,7 +13,7 @@ public class CheckersGame implements Game {
     static public final String NAME = "Checkers";
 
     User activeUser, inactiveUser;
-    User blackUser , whiteUser;
+    User blackUser, whiteUser;
     Board board = new Board();
 
     @Override
@@ -96,14 +96,18 @@ public class CheckersGame implements Game {
 
         //to do CHECK IF GAME ENDED
         User winner = getWinner();
-        if (winner != null) {
+        if (winner == null) {
             User temp = this.activeUser;
             this.activeUser = this.inactiveUser;
             inactiveUser = temp;
-        }
-        else {
-         //   getWinner();
-
+        } else {
+            //   getWinner();
+            // Update game and win numbers
+            UserGameScore currentWinnerScore = Database.getDatabase().getScore(getWinner(), CheckersGame.class);
+            currentWinnerScore.updateFromGameOutcome(Outcome.WON);
+            User loser = blackUser.equals(getWinner())?whiteUser:blackUser;
+            UserGameScore currentLoserScore = Database.getDatabase().getScore(loser, CheckersGame.class);
+            currentLoserScore.updateFromGameOutcome(Outcome.LOST);
         }
     }
 
@@ -138,29 +142,29 @@ public class CheckersGame implements Game {
         return Location.stream().map(location -> this.board.getPiece(location)).filter(Objects::nonNull);
     }
 
-   /* public boolean isGameEnded() {
-        boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
-        boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
+    /* public boolean isGameEnded() {
+         boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
+         boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
 
-        Map<Piece, List<Move>> currMapp = listPossibleMoves();
-        return (!doesBlackHavePieces || !doesWhiteHavePieces || !doesBlackHaveMoves(currMapp) || !doesWhiteHaveMoves(currMapp));
-    }*/
+         Map<Piece, List<Move>> currMapp = listPossibleMoves();
+         return (!doesBlackHavePieces || !doesWhiteHavePieces || !doesBlackHaveMoves(currMapp) || !doesWhiteHaveMoves(currMapp));
+     }*/
     public User getWinner() {
         boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
         boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
 
         Map<Piece, List<Move>> currMapp = listPossibleMoves();
-        if (!doesBlackHavePieces ||  !doesBlackHaveMoves(currMapp) ) {
+        if (!doesBlackHavePieces || !doesBlackHaveMoves(currMapp)) {
             Status status = Status.FINISHED;
             return whiteUser;
-        }
-        else if (!doesWhiteHavePieces ||  !doesWhiteHaveMoves(currMapp) ) {
+        } else if (!doesWhiteHavePieces || !doesWhiteHaveMoves(currMapp)) {
             Status status = Status.FINISHED;
             return blackUser;
         }
         return null;
 
     }
+
     public boolean doesBlackHaveMoves(Map<Piece, List<Move>> currMapp) {
         for (Map.Entry<Piece, List<Move>> item : currMapp.entrySet()) {
             if (item.getKey() != null && item.getKey().getColor() == Piece.Color.BLACK) {

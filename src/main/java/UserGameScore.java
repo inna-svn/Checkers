@@ -46,7 +46,7 @@ public final class UserGameScore {
         }
         computeRate();
 
-        Database.getDatabase().updateScores(user, gameClass, winsNum, gamesNum, rate);
+        Database.getDatabase().updateScore(user, gameClass, winsNum, gamesNum, rate);
     }
 
     void computeRate() {
