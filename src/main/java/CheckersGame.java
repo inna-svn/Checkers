@@ -96,17 +96,18 @@ public class CheckersGame implements Game {
 
         //to do CHECK IF GAME ENDED
         User winner = getWinner();
-        if (winner != null) {
+        if (winner == null) {
             User temp = this.activeUser;
             this.activeUser = this.inactiveUser;
             inactiveUser = temp;
         } else {
             //   getWinner();
             // Update game and win numbers
-            UserGameScore activeScore = Database.getDatabase().getScore(activeUser, CheckersGame.class);
-            activeScore.updateFromGameOutcome(Outcome.WON);
-            UserGameScore inactiveScore = Database.getDatabase().getScore(inactiveUser, CheckersGame.class);
-            inactiveScore.updateFromGameOutcome(Outcome.LOST);
+            UserGameScore currentWinnerScore = Database.getDatabase().getScore(getWinner(), CheckersGame.class);
+            currentWinnerScore.updateFromGameOutcome(Outcome.WON);
+            User loser = blackUser.equals(getWinner())?whiteUser:blackUser;
+            UserGameScore currentLoserScore = Database.getDatabase().getScore(loser, CheckersGame.class);
+            currentLoserScore.updateFromGameOutcome(Outcome.LOST);
         }
     }
 
