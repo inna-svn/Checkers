@@ -1,7 +1,7 @@
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
 
 public class CheckersPiece implements Piece {
 
@@ -106,8 +106,6 @@ public class CheckersPiece implements Piece {
     }
 
     public List<Location> getCopyOfIntermidiates(List <Location>intermediates){
-        List <Location> temp= new ArrayList<>();
-        intermediates.forEach(it->temp.add(it));
-        return temp;
+        return new ArrayList<>(intermediates);
     }
 }
