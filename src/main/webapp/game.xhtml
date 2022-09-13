@@ -9,21 +9,8 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <title><ui:insert name="title">Checkers</ui:insert></title>
     <!-- Does not work. To fix.  -->
-<!--    <h:outputStylesheet library="css" name="main.css" />-->
-    <style>
-        td {
-            padding: 0.5em;
-            border: 1px solid gray;
-        }
-        .WHITE-background {
-            background-color: white;
-            color: black;
-        }
-        .BLACK-background {
-            background-color: black;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="main.css"/>
+
 </h:head>
 <h:body>
 
@@ -46,7 +33,7 @@
     </script>
 
     <h2>Board</h2>
-    <table class="board">
+    <table>
         <ui:repeat value="#{gameEndpoint.getBoardLocations(userSession.user)}" var="row">
             <tr>
                 <ui:repeat value="${row}" var="bl">
@@ -54,8 +41,11 @@
                         <h:outputText rendered="${bl.piece == null}">
                             -
                         </h:outputText>
-                        <h:outputText rendered="${bl.piece != null}">
-                            ${bl.piece.color}
+                        <h:outputText rendered="${bl.piece.color == 'BLACK'}">
+                            <img src="Images/blackPiece.jpg"/>
+                        </h:outputText>
+                        <h:outputText rendered="${bl.piece.color == 'WHITE'}">
+                            <img src="Images/whitePiece.jpg"/>
                         </h:outputText>
                     </td>
                 </ui:repeat>
