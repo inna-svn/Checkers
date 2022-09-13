@@ -9,6 +9,7 @@ import java.util.Map;
 public interface Game {
 
     String NAME = null;
+    String getName();
 
     enum Status {
         IN_PROGRESS,
@@ -28,6 +29,8 @@ public interface Game {
     void start(@NotNull User user1, @NotNull User user2);
 
     User getActiveUser(); // Whose turn is it?
+    User getBlackUser();
+    User getWhiteUser();
 
     default void abandon(User user) {
         // TODO

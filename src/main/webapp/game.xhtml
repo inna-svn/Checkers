@@ -8,10 +8,26 @@
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <title><ui:insert name="title">Checkers</ui:insert></title>
+    <!-- Does not work. To fix.  -->
+<!--    <h:outputStylesheet library="css" name="main.css" />-->
+    <style>
+        td {
+            padding: 0.5em;
+            border: 1px solid gray;
+        }
+        .WHITE-background {
+            background-color: white;
+            color: black;
+        }
+        .BLACK-background {
+            background-color: black;
+            color: white;
+        }
+    </style>
 </h:head>
 <h:body>
 
-    <h1>Playing #{userSession.lobby.gameName}</h1>
+    <h1>Playing #{gameEndpoint.game.name}</h1>
 
 
     <!-- https://javaee.github.io/tutorial/jsf-ws003.html -->
@@ -29,6 +45,27 @@
 
     </script>
 
+    <h2>Board</h2>
+    <table class="board">
+        <ui:repeat value="#{gameEndpoint.getBoardLocations(userSession.user)}" var="row">
+            <tr>
+                <ui:repeat value="${row}" var="bl">
+                    <td class="#{bl.location.color}-background">
+                        <h:outputText rendered="${bl.piece == null}">
+                            -
+                        </h:outputText>
+                        <h:outputText rendered="${bl.piece != null}">
+                            ${bl.piece.color}
+                        </h:outputText>
+                    </td>
+                </ui:repeat>
+            </tr>
+        </ui:repeat>
+    </table>
+
+    <h:outputText rendered="${gameEndpoint.game.activeUser == userSession.user}">
+        your turn
+    </h:outputText>
 
 </h:body>
 </html>
