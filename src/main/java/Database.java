@@ -1,6 +1,8 @@
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.sql.*;
 
-
+@ApplicationScoped
 public class Database {
     private final Connection connection;
     private final Statement statement;
