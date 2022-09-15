@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+>
+<h:head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>
+        <ui:insert name="title">Checkers</ui:insert>
+    </title>
+    <link rel="stylesheet" href="main.css"/>
+</h:head>
+<h:body>
+
+    You are logged in, #{userSession.username}<br/>
+    <h:form id="signout">
+        <h:commandButton value="Sign Out" action="#{userSession.signOut}"/>
+    </h:form>
+    <h:link outcome="home.xhtml">Home</h:link>
+    <div class="center">
+        <br/>
+        <img src="Images/myScore.jpg" alt="myscore"/>
+        <div class="score">
+            <h:outputText id="winScore" value="Wins number: #{userSession.score.getWinsNum()}"/>
+            <br/>
+            <h:outputText id="gameScore" value="Games number: #{userSession.score.getGamesNum()}"/>
+            <br/>
+            <h:outputText id="rateScore" value="Rate: #{userSession.score.getRate()}"/>
+        </div>
+    </div>
+
+
+</h:body>
+</html>

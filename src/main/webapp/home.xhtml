@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
 >
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
@@ -21,6 +22,7 @@
                 <h:form>
                     <!-- TODO: style it as a link -->
                     <h:commandButton value="#{lobby.gameName} - #{lobby.users.size()} user(s)" action="#{userSession.joinLobby(lobby)}"/>
+                    <p:commandLink value="#{lobby.gameName}- My Scores " action="#{userSession.scoreForGame(lobby.gameClass)}" oncomplete="window.open('scores.xhtml')"/>
                 </h:form>
             </li>
         </ui:repeat>
