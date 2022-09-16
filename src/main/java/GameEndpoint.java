@@ -69,6 +69,7 @@ public class GameEndpoint {
         List<BoardLocation> rowPieces;
 
         Board board = getGame().getBoard();
+        System.err.println("getBoardLocations");
 
         for (int row = 0; row < Board.SIZE; row++) {
             rowPieces = new ArrayList<>(Board.SIZE);
@@ -76,7 +77,7 @@ public class GameEndpoint {
                 Location location = new Location(row, col); // XXX: inverse row & col
                 Piece piece = board.getPiece(location);
                 List<Move> moves;
-                if(perspectiveOfUser == getGame().getActiveUser() && piece != null) {
+                if(getGame().userCanMovePiece(perspectiveOfUser, piece)) {
                     moves = piece.listPossibleMoves();
                 } else {
                     moves = Collections.emptyList();
@@ -87,7 +88,7 @@ public class GameEndpoint {
         }
 
         // Rotate the board representation for the second player
-        if(getGame().getBlackUser().equals(perspectiveOfUser)) {
+        if(getGame().getWhiteUser().equals(perspectiveOfUser)) {
             Collections.reverse(rows);
             rows.forEach(Collections::reverse);
         }
