@@ -24,10 +24,12 @@ public class GameEndpoint {
 
         public final Location location;
         public final Piece piece;
+        public final List<Move> moves;
 
-        BoardLocation(Location location, Piece piece) {
+        BoardLocation(Location location, Piece piece, List<Move> moves) {
             this.location = location;
             this.piece = piece;
+            this.moves = moves;
         }
 
         public Location getLocation() {
@@ -38,6 +40,9 @@ public class GameEndpoint {
             return piece;
         }
 
+        public List<Move> getMoves() {
+            return moves;
+        }
     }
 
     synchronized public String idForGame(Game game) {
@@ -69,7 +74,15 @@ public class GameEndpoint {
             rowPieces = new ArrayList<>(Board.SIZE);
             for (int col = 0; col < Board.SIZE; col++) {
                 Location location = new Location(row, col); // XXX: inverse row & col
-                rowPieces.add(new BoardLocation(location, board.getPiece(location)));
+                Piece piece = board.getPiece(location);
+                List<Move> moves;
+                if(perspectiveOfUser == getGame().getActiveUser() && piece != null) {
+                    moves = piece.listPossibleMoves();
+                } else {
+                    moves = Collections.emptyList();
+                }
+                System.err.println("Moves size:" + moves.size());
+                rowPieces.add(new BoardLocation(location, piece, moves)); // Optimization to do: only for active user
             }
             rows.add(rowPieces);
         }

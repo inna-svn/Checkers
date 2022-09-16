@@ -44,6 +44,14 @@
                         <h:outputText rendered="${bl.piece.color == 'WHITE'}">
                             <img src="Images/whitePiece.jpg" alt="white piece"/>
                         </h:outputText>
+
+                        <h:outputText rendered="${bl.moves.size() == 0}">
+                            -
+                        </h:outputText>
+
+                        <h:outputText rendered="${bl.moves.size() != 0}">
+                            M
+                        </h:outputText>
                     </td>
                 </ui:repeat>
             </tr>
