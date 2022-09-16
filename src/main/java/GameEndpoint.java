@@ -81,7 +81,6 @@ public class GameEndpoint {
                 } else {
                     moves = Collections.emptyList();
                 }
-                System.err.println("Moves size:" + moves.size());
                 rowPieces.add(new BoardLocation(location, piece, moves)); // Optimization to do: only for active user
             }
             rows.add(rowPieces);

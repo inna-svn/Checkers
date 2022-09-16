@@ -21,7 +21,7 @@
     <!-- https://javaee.github.io/javaee-spec/javadocs/javax/faces/push/Push.html -->
     <!-- TOOD: By game ID and user ID, not game name and user name -->
     <!-- Warning: ajax tag does not work -->
-    <f:websocket channel="game" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage" />
+    <f:websocket channel="game" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage"/>
 
     <script>
         // WIP
@@ -36,13 +36,10 @@
     <table>
         <ui:repeat value="#{gameEndpoint.getBoardLocations(userSession.user)}" var="row">
             <tr>
-                <ui:repeat value="${row}" var="bl">
+                <ui:repeat value="#{row}" var="bl">
                     <td class="#{bl.location.color}-background has-#{bl.moves.size() == 0 ? 'no-' : ''}moves">
-                        <h:outputText rendered="${bl.piece.color == 'BLACK'}">
-                            <img src="Images/blackPiece.jpg" alt="black piece"/>
-                        </h:outputText>
-                        <h:outputText rendered="${bl.piece.color == 'WHITE'}">
-                            <img src="Images/whitePiece.jpg" alt="white piece"/>
+                        <h:outputText rendered="#{bl.piece != null}">
+                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg" alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
                         </h:outputText>
                     </td>
                 </ui:repeat>
@@ -50,7 +47,7 @@
         </ui:repeat>
     </table>
 
-    <h:outputText rendered="${gameEndpoint.game.activeUser == userSession.user}">
+    <h:outputText rendered="#{gameEndpoint.game.activeUser == userSession.user}">
         your turn
     </h:outputText>
 
