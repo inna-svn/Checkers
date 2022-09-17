@@ -23,13 +23,16 @@
     <h2>Users in the lobby</h2>
 
     <h:panelGroup id="list">
-    <ul>
-        <ui:repeat value="#{userSession.lobby.users}" var="user">
-            <li>
-                #{user.username} <h:outputText rendered="#{user == userSession.user}">(you)</h:outputText>
-            </li>
-        </ui:repeat>
-    </ul>
+        <ul>
+            <ui:repeat value="#{userSession.lobby.users}" var="user">
+                <li>
+                    #{user.username} <h:outputText rendered="#{user == userSession.user}">(you)</h:outputText>
+                </li>
+            </ui:repeat>
+        </ul>
+        <h:outputText rendered="#{userSession.lobby.canStartGame()}">
+            The game will start in few seconds
+        </h:outputText>
     </h:panelGroup>
 
     <!-- https://javaee.github.io/tutorial/jsf-ws003.html -->

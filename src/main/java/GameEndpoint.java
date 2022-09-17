@@ -8,6 +8,7 @@ import jakarta.inject.Named;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Named
 @ApplicationScoped
@@ -17,30 +18,36 @@ public class GameEndpoint {
     @Push(channel = "game")
     private PushContext gamePushContext;
 
+    record UserInGame(User user, Game game) {}
+
     Map<Game, String> gamesToIds = new HashMap<>();
     Map<String, Game> idsToGames = new HashMap<>();
+    Map<UserInGame, Piece> selectedPieces = new HashMap<>();
 
     public static final class BoardLocation {
 
-        public final Location location;
-        public final Piece piece;
+        private final Location location;
+        private final Piece piece;
+        private final boolean isSelected;
+        private final boolean hasMoves;
+        private final boolean isMoveTarget;
 
-        BoardLocation(Location location, Piece piece) {
+        BoardLocation(Location location, Piece piece, boolean isSelected, boolean hasMoves, boolean isMoveTarget) {
             this.location = location;
             this.piece = piece;
+            this.isSelected = isSelected;
+            this.hasMoves = hasMoves;
+            this.isMoveTarget = isMoveTarget;
         }
 
-        public Location getLocation() {
-            return location;
-        }
-
-        public Piece getPiece() {
-            return piece;
-        }
-
+        public Location getLocation() {return location;}
+        public Piece getPiece() {return piece;}
+        public boolean getIsSelected() {return isSelected;}
+        public boolean getHasMoves() {return hasMoves;}
+        public boolean getIsMoveTarget() {return isMoveTarget;}
     }
 
-    synchronized public String idForGame(Game game) {
+    synchronized public String idForGame(@NotNull Game game) {
         gamesToIds.computeIfAbsent(game, g -> UUID.randomUUID().toString());
         String id = gamesToIds.get(game);
         idsToGames.put(id, game);
@@ -59,28 +66,80 @@ public class GameEndpoint {
         return gameForId(gameId);
     }
 
-    public List<List<BoardLocation>> getBoardLocations(User perspectiveOfUser) {
+    public List<List<BoardLocation>> getBoardState(@NotNull User perspectiveOfUser) {
         List<List<BoardLocation>> rows = new ArrayList<>(Board.SIZE);
         List<BoardLocation> rowPieces;
 
         Board board = getGame().getBoard();
+        System.err.println("getBoardLocations");
+
+        var selectedPiece = selectedPieces.get(new UserInGame(perspectiveOfUser, getGame()));
+        Set<Location> moveTargetLocations;
+        if(selectedPiece != null) {
+            moveTargetLocations = selectedPiece.listPossibleMoves().stream().map(Move::end).collect(Collectors.toSet());
+        } else {
+            moveTargetLocations = new HashSet<>();
+        }
 
         for (int row = 0; row < Board.SIZE; row++) {
             rowPieces = new ArrayList<>(Board.SIZE);
             for (int col = 0; col < Board.SIZE; col++) {
                 Location location = new Location(row, col); // XXX: inverse row & col
-                rowPieces.add(new BoardLocation(location, board.getPiece(location)));
+                Piece piece = board.getPiece(location);
+                boolean hasMoves = false;
+                if(getGame().userCanMovePiece(perspectiveOfUser, piece)) {
+                    hasMoves = piece.listPossibleMoves().size() > 0;
+                }
+                var isMoveTarget = moveTargetLocations.contains(location);
+                var isSelected = piece != null && piece.equals(selectedPiece);
+                rowPieces.add(new BoardLocation(location, piece, isSelected, hasMoves, isMoveTarget)); // Optimization to do: only for active user
             }
             rows.add(rowPieces);
         }
 
         // Rotate the board representation for the second player
-        if(getGame().getBlackUser().equals(perspectiveOfUser)) {
+        if(getGame().getWhiteUser().equals(perspectiveOfUser)) {
             Collections.reverse(rows);
             rows.forEach(Collections::reverse);
         }
 
         return rows;
+    }
+
+    public void selectPiece(@NotNull User user, @NotNull Piece piece) {
+        var uig = new UserInGame(user, getGame());
+        if(Objects.equals(piece, selectedPieces.get(uig))) {
+            // Already selected -> unselect
+            selectedPieces.remove(uig);
+        } else {
+            // Nothing was select or another piece was selected -> select
+            selectedPieces.put(uig, piece);
+        }
+    }
+
+    public void makeMove(@NotNull User user, @NotNull Location location) {
+        var uig = new UserInGame(user, getGame());
+        var selectedPiece = selectedPieces.get(uig);
+        Preconditions.checkNotNull(selectedPiece, "makeMove is not possible when no piece was selected");
+
+        // Find the move that ends at the selected location
+        // Multiple possible moves ending at the same location are not handled
+        var move = selectedPiece.listPossibleMoves().stream().filter(m -> m.end().equals(location)).findFirst();
+        Preconditions.checkState(move.isPresent(), "Move with given end location was not found");
+
+        selectedPieces.remove(uig);
+        getGame().makeMove(user, move.get());
+
+        // Let the other user know
+        var cmd = new HashMap<String, Object>();
+        cmd.put("func", "renderBoard");
+        cmd.put("args", new String[]{});
+        // Sending to specific user does not work for unknown reason
+        // System.err.println("GameEndpoint#makeMove() - Will send message to " + getGame().getName() + '_' + getGame().getActiveUser().getUsername());
+        // gamePushContext.send(cmd, getGame().getName() + '_' + getGame().getActiveUser().getUsername());
+
+        gamePushContext.send(cmd);
+
     }
 
 }

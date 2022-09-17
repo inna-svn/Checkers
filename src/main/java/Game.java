@@ -1,5 +1,6 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,5 +60,27 @@ public interface Game {
     public Board getBoard();
 
     public void PrintBoard();
+
+    default User userThatPlays(Piece.Color color) {
+        if(color == Piece.Color.WHITE) {
+            return getWhiteUser();
+        } else {
+            return getBlackUser();
+        }
+    }
+
+    default boolean pieceBelongsToUser(@NotNull Piece piece, @NotNull User user) {
+        return userThatPlays(piece.getColor()).equals(user);
+    }
+
+    default boolean userCanMovePiece(@NotNull User user, @Nullable Piece piece) {
+        if(piece == null) {
+            return false;
+        }
+        if(!getActiveUser().equals(user)) {
+            return false;
+        }
+        return pieceBelongsToUser(piece, user);
+    }
 
 }

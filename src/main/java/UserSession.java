@@ -50,6 +50,7 @@ public class UserSession implements Serializable {
         return user != null;
     }
 
+    // Possible improvement: allow being in multiple lobbies simultaneously
     public Lobby getLobby() {
         return user.getLobby();
     }
@@ -120,6 +121,10 @@ public class UserSession implements Serializable {
         }
 
         return "lobby.xhtml?faces-redirect=true";
+    }
+
+    public void test() {
+        System.err.println("UserSession#test()");
     }
 
 }
