@@ -8,6 +8,7 @@ import jakarta.inject.Named;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Named
 @ApplicationScoped
@@ -17,19 +18,24 @@ public class GameEndpoint {
     @Push(channel = "game")
     private PushContext gamePushContext;
 
+    record UserInGame(User user, Game game) {}
+
     Map<Game, String> gamesToIds = new HashMap<>();
     Map<String, Game> idsToGames = new HashMap<>();
+    Map<UserInGame, Piece> selectedPieces = new HashMap<>();
 
     public static final class BoardLocation {
 
         public final Location location;
         public final Piece piece;
         public final List<Move> moves;
+        private final boolean isMoveTarget;
 
-        BoardLocation(Location location, Piece piece, List<Move> moves) {
+        BoardLocation(Location location, Piece piece, List<Move> moves, boolean isMoveTarget) {
             this.location = location;
             this.piece = piece;
             this.moves = moves;
+            this.isMoveTarget = isMoveTarget;
         }
 
         public Location getLocation() {
@@ -42,6 +48,10 @@ public class GameEndpoint {
 
         public List<Move> getMoves() {
             return moves;
+        }
+
+        public boolean getIsMoveTarget() {
+            return isMoveTarget;
         }
     }
 
@@ -64,12 +74,20 @@ public class GameEndpoint {
         return gameForId(gameId);
     }
 
-    public List<List<BoardLocation>> getBoardLocations(User perspectiveOfUser) {
+    public List<List<BoardLocation>> getBoardState(User perspectiveOfUser) {
         List<List<BoardLocation>> rows = new ArrayList<>(Board.SIZE);
         List<BoardLocation> rowPieces;
 
         Board board = getGame().getBoard();
         System.err.println("getBoardLocations");
+
+        var selectedPiece = selectedPieces.get(new UserInGame(perspectiveOfUser, getGame()));
+        Set<Location> moveTargetLocations;
+        if(selectedPiece != null) {
+            moveTargetLocations = selectedPiece.listPossibleMoves().stream().map(Move::end).collect(Collectors.toSet());
+        } else {
+            moveTargetLocations = new HashSet<>();
+        }
 
         for (int row = 0; row < Board.SIZE; row++) {
             rowPieces = new ArrayList<>(Board.SIZE);
@@ -82,7 +100,8 @@ public class GameEndpoint {
                 } else {
                     moves = Collections.emptyList();
                 }
-                rowPieces.add(new BoardLocation(location, piece, moves)); // Optimization to do: only for active user
+                var isMoveTarget = moveTargetLocations.contains(location);
+                rowPieces.add(new BoardLocation(location, piece, moves, isMoveTarget)); // Optimization to do: only for active user
             }
             rows.add(rowPieces);
         }
@@ -96,8 +115,15 @@ public class GameEndpoint {
         return rows;
     }
 
-    public void selectPiece(Location location) {
-        System.err.println("selectPiece() " + location);
+    public void selectPiece(User user, Piece piece) {
+        var uig = new UserInGame(user, getGame());
+        if(Objects.equals(piece, selectedPieces.get(uig))) {
+            // Already selected -> unselect
+            selectedPieces.remove(uig);
+        } else {
+            // Nothing was select or another piece was selected -> select
+            selectedPieces.put(uig, piece);
+        }
     }
 
 }

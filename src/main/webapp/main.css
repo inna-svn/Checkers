@@ -18,3 +18,7 @@ td {
 .has-moves {
     border-color: red;
 }
+
+.is-move-target {
+    border-color: darkorange;
+}

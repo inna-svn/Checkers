@@ -16,6 +16,7 @@ public class CheckersPiece implements Piece {
     }
 
     public Color getColor() { return this.color; }
+    public Location getLocation() {return location;}
 
     @Override
     public List<Move> listPossibleMoves() {
