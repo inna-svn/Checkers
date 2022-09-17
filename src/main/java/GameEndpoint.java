@@ -96,4 +96,8 @@ public class GameEndpoint {
         return rows;
     }
 
+    public void selectPiece(Location location) {
+        System.err.println("selectPiece() " + location);
+    }
+
 }

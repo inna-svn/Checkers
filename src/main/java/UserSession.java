@@ -122,4 +122,8 @@ public class UserSession implements Serializable {
         return "lobby.xhtml?faces-redirect=true";
     }
 
+    public void test() {
+        System.err.println("UserSession#test()");
+    }
+
 }
