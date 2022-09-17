@@ -40,16 +40,17 @@
                 <ui:repeat value="#{gameEndpoint.getBoardState(userSession.user)}" var="row">
                     <tr>
                         <ui:repeat value="#{row}" var="bl">
-                            <td class="#{bl.location.color}-background has-#{bl.moves.size() == 0 ? 'no-' : ''}moves is-#{bl.isMoveTarget ? '' : 'not-'}move-target"
+                            <td class="#{bl.location.color}-background has-#{not bl.getHasMoves() ? 'no-' : ''}moves is-#{bl.isMoveTarget ? '' : 'not-'}move-target is-#{bl.isSelected ? '' : 'not-'}selected"
                                 title="#{bl.location}">
-                                <h:outputText rendered="#{bl.moves.size() == 0}">
+                                <h:outputText rendered="#{not bl.getHasMoves()}">
                                     <h:outputText rendered="#{bl.piece != null}">
                                         <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
                                              alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
                                     </h:outputText>
                                 </h:outputText>
-                                <h:outputText rendered="#{bl.moves.size() > 0}">
-                                    <h:commandLink actionListener="#{gameEndpoint.selectPiece(userSession.user, bl.piece)}">
+                                <h:outputText rendered="#{bl.getHasMoves()}">
+                                    <h:commandLink
+                                            actionListener="#{gameEndpoint.selectPiece(userSession.user, bl.piece)}">
                                         <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
                                         <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
                                              alt="#{bl.piece.color.toString().toLowerCase()} piece"/>

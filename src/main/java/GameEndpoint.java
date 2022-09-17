@@ -26,36 +26,28 @@ public class GameEndpoint {
 
     public static final class BoardLocation {
 
-        public final Location location;
-        public final Piece piece;
-        public final List<Move> moves;
+        private final Location location;
+        private final Piece piece;
+        private final boolean isSelected;
+        private final boolean hasMoves;
         private final boolean isMoveTarget;
 
-        BoardLocation(Location location, Piece piece, List<Move> moves, boolean isMoveTarget) {
+        BoardLocation(Location location, Piece piece, boolean isSelected, boolean hasMoves, boolean isMoveTarget) {
             this.location = location;
             this.piece = piece;
-            this.moves = moves;
+            this.isSelected = isSelected;
+            this.hasMoves = hasMoves;
             this.isMoveTarget = isMoveTarget;
         }
 
-        public Location getLocation() {
-            return location;
-        }
-
-        public Piece getPiece() {
-            return piece;
-        }
-
-        public List<Move> getMoves() {
-            return moves;
-        }
-
-        public boolean getIsMoveTarget() {
-            return isMoveTarget;
-        }
+        public Location getLocation() {return location;}
+        public Piece getPiece() {return piece;}
+        public boolean getIsSelected() {return isSelected;}
+        public boolean getHasMoves() {return hasMoves;}
+        public boolean getIsMoveTarget() {return isMoveTarget;}
     }
 
-    synchronized public String idForGame(Game game) {
+    synchronized public String idForGame(@NotNull Game game) {
         gamesToIds.computeIfAbsent(game, g -> UUID.randomUUID().toString());
         String id = gamesToIds.get(game);
         idsToGames.put(id, game);
@@ -74,7 +66,7 @@ public class GameEndpoint {
         return gameForId(gameId);
     }
 
-    public List<List<BoardLocation>> getBoardState(User perspectiveOfUser) {
+    public List<List<BoardLocation>> getBoardState(@NotNull User perspectiveOfUser) {
         List<List<BoardLocation>> rows = new ArrayList<>(Board.SIZE);
         List<BoardLocation> rowPieces;
 
@@ -94,14 +86,13 @@ public class GameEndpoint {
             for (int col = 0; col < Board.SIZE; col++) {
                 Location location = new Location(row, col); // XXX: inverse row & col
                 Piece piece = board.getPiece(location);
-                List<Move> moves;
+                boolean hasMoves = false;
                 if(getGame().userCanMovePiece(perspectiveOfUser, piece)) {
-                    moves = piece.listPossibleMoves();
-                } else {
-                    moves = Collections.emptyList();
+                    hasMoves = piece.listPossibleMoves().size() > 0;
                 }
                 var isMoveTarget = moveTargetLocations.contains(location);
-                rowPieces.add(new BoardLocation(location, piece, moves, isMoveTarget)); // Optimization to do: only for active user
+                var isSelected = piece != null && piece.equals(selectedPiece);
+                rowPieces.add(new BoardLocation(location, piece, isSelected, hasMoves, isMoveTarget)); // Optimization to do: only for active user
             }
             rows.add(rowPieces);
         }
@@ -115,7 +106,7 @@ public class GameEndpoint {
         return rows;
     }
 
-    public void selectPiece(User user, Piece piece) {
+    public void selectPiece(@NotNull User user, @NotNull Piece piece) {
         var uig = new UserInGame(user, getGame());
         if(Objects.equals(piece, selectedPieces.get(uig))) {
             // Already selected -> unselect

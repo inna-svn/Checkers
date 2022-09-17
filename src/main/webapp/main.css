@@ -16,9 +16,13 @@ td {
 }
 
 .has-moves {
-    border-color: red;
+    border-color: greenyellow;
 }
 
 .is-move-target {
     border-color: darkorange;
+}
+
+.is-selected {
+    border: 2px dotted greenyellow;
 }
