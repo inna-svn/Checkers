@@ -22,7 +22,6 @@ public class UserSession implements Serializable {
     private User user;
     private String errorMessage = null;
 
-    private UserGameScore score;
 
     public String getUsername() {
         return username;
@@ -48,7 +47,6 @@ public class UserSession implements Serializable {
         return user;
     }
 
-    public UserGameScore getScore() { return score;}
     public boolean isSignedIn() {
         return user != null;
     }
@@ -98,8 +96,8 @@ public class UserSession implements Serializable {
         return "index.html?faces-redirect=true";
     }
 
-    public void scoreForGame(Class<? extends Game> gameClass){
-        this.score = user.scoreForGame(gameClass);
+    public UserGameScore scoreForGame(Class<? extends Game> gameClass){
+        return user.scoreForGame(gameClass);
     }
 
     public Collection<Lobby> getAvailableLobbies() {
