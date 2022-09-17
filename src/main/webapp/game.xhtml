@@ -16,44 +16,35 @@
 
     <h1>Playing #{gameEndpoint.game.name}</h1>
 
-
-    <!-- https://javaee.github.io/tutorial/jsf-ws003.html -->
-    <!-- https://javaee.github.io/javaee-spec/javadocs/javax/faces/push/Push.html -->
-    <!-- TOOD: By game ID and user ID, not game name and user name -->
-    <!-- Warning: ajax tag does not work -->
-    <f:websocket channel="game" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage"/>
-
-    <script>
-        // WIP
-        function onMessage(message, channel, messageEvent) {
-            console.debug('onMessage', message, channel, messageEvent);
-            window[message.func](...message.args);
-        }
-
-    </script>
-
     <h2>Board</h2>
 
-    <h:form>
+    <h:form id="board">
         <f:ajax execute="@form" render="@form">
-            <table id="board">
+            <table>
                 <ui:repeat value="#{gameEndpoint.getBoardState(userSession.user)}" var="row">
                     <tr>
                         <ui:repeat value="#{row}" var="bl">
                             <td class="#{bl.location.color}-background has-#{not bl.getHasMoves() ? 'no-' : ''}moves is-#{bl.isMoveTarget ? '' : 'not-'}move-target is-#{bl.isSelected ? '' : 'not-'}selected"
                                 title="#{bl.location}">
-                                <h:outputText rendered="#{not bl.getHasMoves()}">
-                                    <h:outputText rendered="#{bl.piece != null}">
-                                        <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
-                                             alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
+                                <h:outputText rendered="#{bl.piece != null}">
+                                    <h:outputText rendered="#{not bl.getHasMoves()}">
+                                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
+                                                 alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
+                                    </h:outputText>
+                                    <h:outputText rendered="#{bl.getHasMoves()}">
+                                        <h:commandLink
+                                                actionListener="#{gameEndpoint.selectPiece(userSession.user, bl.piece)}">
+                                            <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
+                                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
+                                                 alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
+                                        </h:commandLink>
                                     </h:outputText>
                                 </h:outputText>
-                                <h:outputText rendered="#{bl.getHasMoves()}">
+                                <h:outputText rendered="#{bl.isMoveTarget}">
                                     <h:commandLink
-                                            actionListener="#{gameEndpoint.selectPiece(userSession.user, bl.piece)}">
+                                            actionListener="#{gameEndpoint.makeMove(userSession.user, bl.location)}">
                                         <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
-                                        <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
-                                             alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
+                                        GO
                                     </h:commandLink>
                                 </h:outputText>
                             </td>
@@ -64,14 +55,37 @@
         </f:ajax>
     </h:form>
 
-    <h2>Info</h2>
-    <h3>Turn</h3>
-    <h:outputText rendered="#{gameEndpoint.game.activeUser == userSession.user}">
-        yours
-    </h:outputText>
-    <h:outputText rendered="#{gameEndpoint.game.activeUser != userSession.user}">
-        opponent's
-    </h:outputText>
+    <h:panelGroup id="info">
+        <h2>Info</h2>
+        <h3>Turn</h3>
+        <h:outputText rendered="#{gameEndpoint.game.activeUser == userSession.user}">
+            yours
+        </h:outputText>
+        <h:outputText rendered="#{gameEndpoint.game.activeUser != userSession.user}">
+            opponent's
+        </h:outputText>
+    </h:panelGroup>
+
+    <!-- https://javaee.github.io/tutorial/jsf-ws003.html -->
+    <!-- https://javaee.github.io/javaee-spec/javadocs/javax/faces/push/Push.html -->
+    <!-- TOOD: By game ID and user ID, not game name and user name -->
+    <!-- Warning: ajax tag does not work -->
+    <f:websocket channel="game" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage"/>
+
+    <h:form>
+        <h:commandScript name="renderBoard" render=":info :board" >
+            <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
+        </h:commandScript>
+    </h:form>
+
+    <script>
+        // WIP
+        function onMessage(message, channel, messageEvent) {
+            console.debug('onMessage', message, channel, messageEvent);
+            window[message.func](...message.args);
+        }
+    </script>
+
 
 </h:body>
 </html>

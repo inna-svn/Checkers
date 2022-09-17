@@ -117,4 +117,29 @@ public class GameEndpoint {
         }
     }
 
+    public void makeMove(@NotNull User user, @NotNull Location location) {
+        var uig = new UserInGame(user, getGame());
+        var selectedPiece = selectedPieces.get(uig);
+        Preconditions.checkNotNull(selectedPiece, "makeMove is not possible when no piece was selected");
+
+        // Find the move that ends at the selected location
+        // Multiple possible moves ending at the same location are not handled
+        var move = selectedPiece.listPossibleMoves().stream().filter(m -> m.end().equals(location)).findFirst();
+        Preconditions.checkState(move.isPresent(), "Move with given end location was not found");
+
+        selectedPieces.remove(uig);
+        getGame().makeMove(user, move.get());
+
+        // Let the other user know
+        var cmd = new HashMap<String, Object>();
+        cmd.put("func", "renderBoard");
+        cmd.put("args", new String[]{});
+        // Sending to specific user does not work for unknown reason
+        // System.err.println("GameEndpoint#makeMove() - Will send message to " + getGame().getName() + '_' + getGame().getActiveUser().getUsername());
+        // gamePushContext.send(cmd, getGame().getName() + '_' + getGame().getActiveUser().getUsername());
+
+        gamePushContext.send(cmd);
+
+    }
+
 }
