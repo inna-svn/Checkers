@@ -39,6 +39,10 @@ Configure the server connection via IDE:
     Password: zubur1
     URL: jdbc:mysql://localhost:3306
 
+Create database (aka schema) `checkers`.
+
+Import the dump from file named `MySQL...-dump.sql`.
+
 ### Install TomEE
 
 Info: Based on https://tomee.apache.org/master/docs/tomee-maven-plugin.html
