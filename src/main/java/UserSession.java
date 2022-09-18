@@ -22,6 +22,7 @@ public class UserSession implements Serializable {
     private User user;
     private String errorMessage = null;
 
+
     public String getUsername() {
         return username;
     }
@@ -94,6 +95,10 @@ public class UserSession implements Serializable {
         user.signOut();
         user = null;
         return "index.html?faces-redirect=true";
+    }
+
+    public UserGameScore scoreForGame(Class<? extends Game> gameClass){
+        return user.scoreForGame(gameClass);
     }
 
     public Collection<Lobby> getAvailableLobbies() {
