@@ -8,18 +8,14 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 
-public class CheckersGame implements Game {
+public class CheckersGame extends Game {
 
     static public final String NAME = "Checkers";
 
     User activeUser, inactiveUser;
     User blackUser, whiteUser;
-    Board board = new Board();
 
     // Should be on Game.getName but there is a bug - https://github.com/jakartaee/expression-language/issues/43
-    public String getName() {
-        return NAME;
-    }
 
     @Override
     public void start(@NotNull User user1, @NotNull User user2, StartType startType) {
@@ -47,9 +43,8 @@ public class CheckersGame implements Game {
         }
 
         switch (startType) {
-            case TEST1: presetKing(user1, user2);
-                break;
-            case TEST2: presetEndGame(user1, user1);
+            case TEST1 -> presetKing(user1, user2);
+            case TEST2 -> presetEndGame(user1, user1);
         }
     }
 
@@ -62,6 +57,10 @@ public class CheckersGame implements Game {
             }
         }
         //move black soldiers in order to block the white soldier
+        makeCommonPresetMoves();
+    }
+
+    private void makeCommonPresetMoves() {
         makeMove(activeUser, new Move(new Location(7, 0), new Location(3, 6), null));
         makeMove(activeUser, new Move(new Location(7, 2), new Location(4, 5), null));
         makeMove(activeUser, new Move(new Location(3, 6), new Location(2, 5), null));
@@ -77,10 +76,7 @@ public class CheckersGame implements Game {
         }
 
         //move black soldiers in order to block the white soldier
-        makeMove(activeUser, new Move(new Location(7, 0), new Location(3, 6), null));
-        makeMove(activeUser, new Move(new Location(7, 2), new Location(4, 5), null));
-        makeMove(activeUser, new Move(new Location(3, 6), new Location(2, 5), null));
-        makeMove(activeUser, new Move(new Location(2, 7), new Location(3, 6), null));
+        makeCommonPresetMoves();
         makeMove(activeUser, new Move(new Location(7, 4), new Location(3, 2), null));
         makeMove(activeUser, new Move(new Location(2, 5), new Location(1, 6), null));
         makeMove(activeUser, new Move(new Location(3, 6), new Location(4, 7), null));
@@ -99,6 +95,11 @@ public class CheckersGame implements Game {
     @Override
     public User getWhiteUser() {
         return whiteUser;
+    }
+
+    @Override
+    public void abandon(User user) {
+        status = Status.FINISHED;
     }
 
     @Override
@@ -148,59 +149,43 @@ public class CheckersGame implements Game {
             this.board.setKingPiece(move.end(), new CheckersKingPiece(this.board, currPiece.getColor(), move.end()));
         }
 
-        //to do CHECK IF GAME ENDED
-        User winner = getWinner();
-        if (winner == null) {
-            User temp = this.activeUser;
-            this.activeUser = this.inactiveUser;
-            inactiveUser = temp;
-        } else {
-            //   getWinner();
-            // Update game and win numbers
-            UserGameScore currentWinnerScore = winner.scoreForGame(CheckersGame.class);
-            currentWinnerScore.updateFromGameOutcome(Outcome.WON);
-            User loser = blackUser.equals(getWinner())?whiteUser:blackUser;
-            UserGameScore currentLoserScore = loser.scoreForGame(CheckersGame.class);
-            currentLoserScore.updateFromGameOutcome(Outcome.LOST);
-        }
+        User temp = this.activeUser;
+        this.activeUser = this.inactiveUser;
+        inactiveUser = temp;
     }
 
-    public Board getBoard() {
-        return this.board;
+    void processPossibleGameEnd() {
+        boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
+        boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
+
+        Map<Piece, List<Move>> currMapp = listPossibleMoves();
+        if (!doesBlackHavePieces || !doesBlackHaveMoves(currMapp)) {
+            winner = whiteUser;
+            loser = blackUser;
+        } else if (!doesWhiteHavePieces || !doesWhiteHaveMoves(currMapp)) {
+            winner = blackUser;
+            loser = whiteUser;
+        }
+
+        if (winner == null) {
+            return;
+        }
+        UserGameScore currentWinnerScore = winner.scoreForGame(CheckersGame.class);
+        currentWinnerScore.updateFromGameOutcome(Outcome.WON);
+        UserGameScore currentLoserScore = loser.scoreForGame(CheckersGame.class);
+        currentLoserScore.updateFromGameOutcome(Outcome.LOST);
+        status = Status.FINISHED;
     }
 
     Stream<Piece> allPieces() {
         return Location.stream().map(location -> this.board.getPiece(location)).filter(Objects::nonNull);
     }
 
-    /* public boolean isGameEnded() {
-         boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
-         boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
-
-         Map<Piece, List<Move>> currMapp = listPossibleMoves();
-         return (!doesBlackHavePieces || !doesWhiteHavePieces || !doesBlackHaveMoves(currMapp) || !doesWhiteHaveMoves(currMapp));
-     }*/
-    public User getWinner() {
-        boolean doesWhiteHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.WHITE);
-        boolean doesBlackHavePieces = allPieces().anyMatch(piece -> piece.getColor() == Piece.Color.BLACK);
-
-        Map<Piece, List<Move>> currMapp = listPossibleMoves();
-        if (!doesBlackHavePieces || !doesBlackHaveMoves(currMapp)) {
-            return whiteUser;
-        } else if (!doesWhiteHavePieces || !doesWhiteHaveMoves(currMapp)) {
-            return blackUser;
-        }
-        return null;
-
-    }
-
     public boolean doesBlackHaveMoves(Map<Piece, List<Move>> currMapp) {
         for (Map.Entry<Piece, List<Move>> item : currMapp.entrySet()) {
             if (item.getKey() != null && item.getKey().getColor() == Piece.Color.BLACK) {
                 if (!item.getValue().isEmpty()) return true;
-
             }
-
         }
         return false;
     }
@@ -212,7 +197,6 @@ public class CheckersGame implements Game {
                     return true;
                 }
             }
-
         }
         return false;
     }

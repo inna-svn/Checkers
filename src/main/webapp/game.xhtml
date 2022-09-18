@@ -20,6 +20,7 @@
 
     <h:form id="board">
         <f:ajax execute="@form" render="@form">
+            <h:outputText rendered="#{gameEndpoint.game.status.toString() == 'IN_PROGRESS'}">
             <table>
                 <ui:repeat value="#{gameEndpoint.getBoardState(userSession.user)}" var="row">
                     <tr>
@@ -52,18 +53,41 @@
                     </tr>
                 </ui:repeat>
             </table>
+            </h:outputText>
+            <h:outputText rendered="#{gameEndpoint.game.status.toString() == 'FINISHED'}">
+                Game Over<br/>
+
+                <h:outputText rendered="#{gameEndpoint.game.winner == userSession.user}">
+                    You win!
+                </h:outputText>
+                <h:outputText rendered="#{gameEndpoint.game.loser == userSession.user}">
+                    You lose :(
+                </h:outputText>
+                <h:outputText rendered="#{gameEndpoint.game.winner == null}">
+                    The game was abandoned
+                </h:outputText>
+            </h:outputText>
         </f:ajax>
     </h:form>
 
     <h:panelGroup id="info">
         <h2>Info</h2>
-        <h3>Turn</h3>
-        <h:outputText rendered="#{gameEndpoint.game.activeUser == userSession.user}">
-            yours
+        <h:outputText rendered="#{gameEndpoint.game.status.toString() == 'IN_PROGRESS'}">
+            <h3>Turn</h3>
+
+            <h:outputText rendered="#{gameEndpoint.game.activeUser == userSession.user}">
+                yours
+            </h:outputText>
+            <h:outputText rendered="#{gameEndpoint.game.activeUser != userSession.user}">
+                opponent's
+            </h:outputText>
+            <br/>
         </h:outputText>
-        <h:outputText rendered="#{gameEndpoint.game.activeUser != userSession.user}">
-            opponent's
-        </h:outputText>
+        <h:form id="abandon">
+            <h:commandButton value="Abandon" action="#{gameEndpoint.abandon(userSession.user)}">
+                <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
+            </h:commandButton>
+        </h:form>
     </h:panelGroup>
 
     <!-- https://javaee.github.io/tutorial/jsf-ws003.html -->

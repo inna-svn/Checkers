@@ -117,6 +117,17 @@ public class GameEndpoint {
         }
     }
 
+    void notifyOtherUser(@NotNull Game game, @NotNull User user) {
+        // Let the other user know
+        var cmd = new HashMap<String, Object>();
+        cmd.put("func", "renderBoard");
+        cmd.put("args", new String[]{});
+        // Sending to specific user does not work for unknown reason
+        // System.err.println("GameEndpoint#makeMove() - Will send message to " + getGame().getName() + '_' + getGame().getActiveUser().getUsername());
+        // gamePushContext.send(cmd, getGame().getName() + '_' + getGame().getActiveUser().getUsername());
+        gamePushContext.send(cmd);
+    }
+
     public void makeMove(@NotNull User user, @NotNull Location location) {
         var uig = new UserInGame(user, getGame());
         var selectedPiece = selectedPieces.get(uig);
@@ -129,17 +140,14 @@ public class GameEndpoint {
 
         selectedPieces.remove(uig);
         getGame().makeMove(user, move.get());
+        getGame().processPossibleGameEnd();
+        notifyOtherUser(getGame(), user);
+    }
 
-        // Let the other user know
-        var cmd = new HashMap<String, Object>();
-        cmd.put("func", "renderBoard");
-        cmd.put("args", new String[]{});
-        // Sending to specific user does not work for unknown reason
-        // System.err.println("GameEndpoint#makeMove() - Will send message to " + getGame().getName() + '_' + getGame().getActiveUser().getUsername());
-        // gamePushContext.send(cmd, getGame().getName() + '_' + getGame().getActiveUser().getUsername());
-
-        gamePushContext.send(cmd);
-
+    public String abandon(@NotNull User user) {
+        getGame().abandon(user);
+        notifyOtherUser(getGame(), user);
+        return "home.xhtml?faces-redirect=true";
     }
 
 }
