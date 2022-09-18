@@ -16,7 +16,7 @@ class CheckersGameTest {
         activeUser = User.signIn("inna", "12345");
         inactiveUser = User.signIn("ilya", "12345");
         game = new CheckersGame();
-        game.start(activeUser, inactiveUser);
+        game.start(activeUser, inactiveUser, Game.StartType.REGULAR);
     }
 
     @org.junit.jupiter.api.Test

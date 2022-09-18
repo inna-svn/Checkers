@@ -22,7 +22,7 @@ public class CheckersGame implements Game {
     }
 
     @Override
-    public void start(@NotNull User user1, @NotNull User user2) {
+    public void start(@NotNull User user1, @NotNull User user2, StartType startType) {
         activeUser = user1;
         inactiveUser = user2;
         whiteUser = activeUser;
@@ -45,6 +45,45 @@ public class CheckersGame implements Game {
                 board.setPiece(currLocation, new CheckersPiece(board, currColor, currLocation));
             }
         }
+
+        switch (startType) {
+            case TEST1: presetKing(user1, user2);
+                break;
+            case TEST2: presetEndGame(user1, user1);
+        }
+    }
+
+
+    public void presetEndGame(@NotNull User user1, @NotNull User user2){
+        //remove all white soldiers expect 2,7
+        for (int row = 0; row < 3; row++) {
+            for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
+                if (col != 7 || row != 2) getBoard().removePiece(new Location(row, col));
+            }
+        }
+        //move black soldiers in order to block the white soldier
+        makeMove(activeUser, new Move(new Location(7, 0), new Location(3, 6), null));
+        makeMove(activeUser, new Move(new Location(7, 2), new Location(4, 5), null));
+        makeMove(activeUser, new Move(new Location(3, 6), new Location(2, 5), null));
+        makeMove(activeUser, new Move(new Location(2, 7), new Location(3, 6), null));
+    }
+
+    public void presetKing(@NotNull User user1, @NotNull User user2){
+        //remove all white soldiers expect 2,7
+        for (int row = 0; row < 3; row++) {
+            for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
+                if (! ((col == 7 && row == 2) || (col == 2 && row == 1))) getBoard().removePiece(new Location(row, col));
+            }
+        }
+
+        //move black soldiers in order to block the white soldier
+        makeMove(activeUser, new Move(new Location(7, 0), new Location(3, 6), null));
+        makeMove(activeUser, new Move(new Location(7, 2), new Location(4, 5), null));
+        makeMove(activeUser, new Move(new Location(3, 6), new Location(2, 5), null));
+        makeMove(activeUser, new Move(new Location(2, 7), new Location(3, 6), null));
+        makeMove(activeUser, new Move(new Location(7, 4), new Location(3, 2), null));
+        makeMove(activeUser, new Move(new Location(2, 5), new Location(1, 6), null));
+        makeMove(activeUser, new Move(new Location(3, 6), new Location(4, 7), null));
     }
 
     @Override
@@ -118,39 +157,16 @@ public class CheckersGame implements Game {
         } else {
             //   getWinner();
             // Update game and win numbers
-            UserGameScore currentWinnerScore = Database.getDatabase().getScore(getWinner(), CheckersGame.class);
+            UserGameScore currentWinnerScore = winner.scoreForGame(CheckersGame.class);
             currentWinnerScore.updateFromGameOutcome(Outcome.WON);
             User loser = blackUser.equals(getWinner())?whiteUser:blackUser;
-            UserGameScore currentLoserScore = Database.getDatabase().getScore(loser, CheckersGame.class);
+            UserGameScore currentLoserScore = loser.scoreForGame(CheckersGame.class);
             currentLoserScore.updateFromGameOutcome(Outcome.LOST);
         }
     }
 
     public Board getBoard() {
         return this.board;
-    }
-
-    public void PrintBoard() {
-        for (int row = 0; row < 8; row++) {
-            System.out.println("\n----------------");
-            System.out.print("|");
-            for (int col = 0; col < 8; col++) {
-                Piece currPiece = this.board.getPiece(new Location(row, col));
-                // Check if current location is a game piece
-                if (currPiece != null) {
-                    if (currPiece.getColor() == Piece.Color.BLACK) {
-                        System.out.print("B");
-                    } else {
-                        System.out.print("W");
-                    }
-                } else {
-                    System.out.print(" ");
-                }
-                System.out.print("|");
-            }
-        }
-
-        System.out.println("");
     }
 
     Stream<Piece> allPieces() {
@@ -170,10 +186,8 @@ public class CheckersGame implements Game {
 
         Map<Piece, List<Move>> currMapp = listPossibleMoves();
         if (!doesBlackHavePieces || !doesBlackHaveMoves(currMapp)) {
-            Status status = Status.FINISHED;
             return whiteUser;
         } else if (!doesWhiteHavePieces || !doesWhiteHaveMoves(currMapp)) {
-            Status status = Status.FINISHED;
             return blackUser;
         }
         return null;

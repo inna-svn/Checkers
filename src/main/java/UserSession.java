@@ -100,7 +100,8 @@ public class UserSession implements Serializable {
         return user.getAvailableLobbies();
     }
 
-    public String joinLobby(Lobby lobby) {
+    public String joinLobby(Lobby lobby, String startTypeString) {
+        var startType = Game.StartType.valueOf(startTypeString);
         user.joinLobby(lobby);
         lobbyEndpoint.onLobbyUserListChange(lobby);
         if(lobby.canStartGame()) {
@@ -112,7 +113,8 @@ public class UserSession implements Serializable {
                 }
                 if(lobby.canStartGame()) {
                     var users = lobby.getUsers();
-                    Game game = gameApplication.startGame(lobby);
+                    Game game;
+                    game = gameApplication.startGame(lobby, startType);
                     // TODO: make /game/{id} URLs work
                     // TODO: pass the new game URL so that the page could redirect to
                     lobbyEndpoint.startGame(lobby, game, users);

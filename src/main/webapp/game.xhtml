@@ -28,14 +28,14 @@
                                 title="#{bl.location}">
                                 <h:outputText rendered="#{bl.piece != null}">
                                     <h:outputText rendered="#{not bl.getHasMoves()}">
-                                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
+                                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece#{bl.piece.resourceName}.jpg"
                                                  alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
                                     </h:outputText>
                                     <h:outputText rendered="#{bl.getHasMoves()}">
                                         <h:commandLink
                                                 actionListener="#{gameEndpoint.selectPiece(userSession.user, bl.piece)}">
                                             <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
-                                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece.jpg"
+                                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece#{bl.piece.resourceName}.jpg"
                                                  alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
                                         </h:commandLink>
                                     </h:outputText>

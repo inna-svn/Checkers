@@ -9,4 +9,6 @@ public interface Piece {
 
     Color getColor();
     Location getLocation();
+
+    String getResourceName();
 }

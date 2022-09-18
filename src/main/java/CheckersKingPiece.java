@@ -1,18 +1,17 @@
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CheckersKingPiece extends CheckersPiece {
     public CheckersKingPiece(@NotNull Board board, @NotNull Color pieceColor, @NotNull Location location) {
         super(board, pieceColor, location);
+        resourceName ="King";
     }
 
     @Override
     public List<Move> listPossibleMoves() {
-        List<Move> moves = new ArrayList<Move>();
-        int colorMod = this.color == Color.WHITE ? 1 : -1;
+        List<Move> moves = new ArrayList<>();
 
         // Check down right
         if (location.x() != 7 && location.y() != 7 && isCellEmpty(this.location, 1, 1)) {
@@ -28,7 +27,7 @@ public class CheckersKingPiece extends CheckersPiece {
             moves.add(new Move(this.location, new Location(this.location.x() - 1, this.location.y() - 1), null));
         }
 
-        moves = listPossibleCaptures(moves, this.location, new ArrayList<Location>(), new ArrayList<Location>());
+        moves = listPossibleCaptures(moves, this.location, new ArrayList<>(), new ArrayList<>());
 
         return moves;
     }
@@ -74,7 +73,6 @@ public class CheckersKingPiece extends CheckersPiece {
         if (!(currLocation.y() < 6 && currLocation.x() > 1)) {
             return false;
         }
-        ;
         Location captureLocation = new Location(currLocation.x() - 1, currLocation.y() + 1);
 
         return (!capturedPieces.contains(captureLocation) &&
@@ -87,7 +85,6 @@ public class CheckersKingPiece extends CheckersPiece {
         if (!(currLocation.y() > 1 && currLocation.x() > 1)) {
             return false;
         }
-        ;
         Location captureLocation = new Location(currLocation.x() - 1, currLocation.y() - 1);
 
         return (!capturedPieces.contains(captureLocation) &&
@@ -100,7 +97,6 @@ public class CheckersKingPiece extends CheckersPiece {
         if (!(currLocation.y() < 6 && currLocation.x() < 6)) {
             return false;
         }
-        ;
         Location captureLocation = new Location(currLocation.x() + 1, currLocation.y() + 1);
 
         return (!capturedPieces.contains(captureLocation) &&
@@ -113,7 +109,6 @@ public class CheckersKingPiece extends CheckersPiece {
         if (!(currLocation.y() > 1 && currLocation.x() < 6)) {
             return false;
         }
-        ;
         Location captureLocation = new Location(currLocation.x() + 1, currLocation.y() - 1);
 
         return (!capturedPieces.contains(captureLocation) &&
