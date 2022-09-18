@@ -19,7 +19,7 @@
             <h:inputSecret id="password" value="#{userSession.password}"/>
         </h:panelGrid>
         <h:commandButton value="Sign In" action="#{userSession.signIn}"/><br/>
-        <h:commandButton value="Sign Up" action="#{userSession.sigUp}"/>
+        <h:commandButton value="Sign Up" action="#{userSession.signUp}"/>
 
     </h:form>
     <h:outputText id="message" rendered="#{userSession.errorMessage != null}">#{userSession.errorMessage}</h:outputText>
