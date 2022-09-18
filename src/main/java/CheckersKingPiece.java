@@ -7,6 +7,7 @@ import java.util.List;
 public class CheckersKingPiece extends CheckersPiece {
     public CheckersKingPiece(@NotNull Board board, @NotNull Color pieceColor, @NotNull Location location) {
         super(board, pieceColor, location);
+        resourceName ="King";
     }
 
     @Override

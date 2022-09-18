@@ -28,6 +28,8 @@ public interface Game {
     User winner = null;
 
     void start(@NotNull User user1, @NotNull User user2);
+    void presetEndGame(@NotNull User user1, @NotNull User user2);
+    void presetKing(@NotNull User user1, @NotNull User user2);
 
     User getActiveUser(); // Whose turn is it?
     User getBlackUser();

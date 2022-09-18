@@ -15,7 +15,7 @@ import java.util.Map;
 public class GameApplication {
 
     // Very not sure
-    public Game startGame(@NotNull Lobby lobby) {
+    public Game startGame(@NotNull Lobby lobby,boolean endPreset,boolean kingPreset) {
         Preconditions.checkState(lobby.canStartGame());
         var users = lobby.startGame();
         users.forEach(u -> u.partLobby(lobby));
@@ -27,7 +27,13 @@ public class GameApplication {
             throw new RuntimeException(e);
         }
         var userList = new ArrayList<>(users); // Note: unknown order
-        game.start(userList.get(0), userList.get(1));
+        if (endPreset)
+            game.presetEndGame(userList.get(0), userList.get(1));
+        else if (kingPreset)
+            game.presetKing(userList.get(0), userList.get(1));
+        else
+            game.start(userList.get(0), userList.get(1));
+
         return game;
     }
 

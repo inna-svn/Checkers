@@ -8,6 +8,7 @@ public class CheckersPiece implements Piece {
     protected Board board;
     protected Location location;
     protected Color color;
+    protected String resourceName ="";
 
     public CheckersPiece(@NotNull Board board, @NotNull Color pieceColor, @NotNull Location location) {
         this.board = board;
@@ -17,6 +18,9 @@ public class CheckersPiece implements Piece {
 
     public Color getColor() { return this.color; }
     public Location getLocation() {return location;}
+    public String getResourceName(){
+        return this.resourceName;
+    }
 
     @Override
     public List<Move> listPossibleMoves() {
