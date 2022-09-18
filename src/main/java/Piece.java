@@ -7,5 +7,8 @@ public interface Piece {
     }
     List<Move> listPossibleMoves();
 
-    public Color getColor();
+    Color getColor();
+    Location getLocation();
+
+    String getResourceName();
 }

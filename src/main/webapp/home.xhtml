@@ -18,16 +18,17 @@
 
     <br/>
     <h2>Join one of the Lobbies</h2>
-    <ul>
         <ui:repeat value="#{userSession.availableLobbies}" var="lobby">
-            <li>
+
+            <h3>#{lobby.gameName} - #{lobby.users.size()} user(s)</h3>
                 <h:form>
-                    <!-- TODO: style it as a link -->
-                    <h:commandButton value="#{lobby.gameName} - #{lobby.users.size()} user(s)" action="#{userSession.joinLobby(lobby)}"/>
+                    <h:commandButton value="Regular Game" action="#{userSession.joinLobby(lobby, 'REGULAR')}"/>
+                    <br/><br/>
+                    <h:commandButton value="Preset KING State For Test" action="#{userSession.joinLobby(lobby, 'TEST1')}"/>
+                    <br/><br/>
+                    <h:commandButton value="Preset END-GAME For Test" action="#{userSession.joinLobby(lobby,'TEST2')}"/>
                 </h:form>
-            </li>
         </ui:repeat>
-    </ul>
     <!--    <h:link outcome="lobby.html"></h:link>-->
 </h:body>
 </html>

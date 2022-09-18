@@ -111,4 +111,9 @@ public class User {
         return lobbies.stream().findFirst().orElse(null);
     }
 
+    @Override
+    public String toString() {
+        return "[id=" + this.id + ", username=" + this.username + " @ " + System.identityHashCode(this) + "]";
+    }
+
 }

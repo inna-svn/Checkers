@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
 import java.util.Map;
@@ -9,26 +10,17 @@ class CheckersGameTest {
     User activeUser;
     User inactiveUser;
 
-
+    @BeforeEach
     @org.junit.jupiter.api.Test
-    public void setUp() {
-        try {
-            activeUser = User.signIn("inna", "12345");
-        } catch (User.SignInError e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            inactiveUser = User.signIn("ilya", "12345");
-        } catch (User.SignInError e) {
-            throw new RuntimeException(e);
-        }
+    public void setUp() throws User.SignInError {
+        activeUser = User.signIn("inna", "12345");
+        inactiveUser = User.signIn("ilya", "12345");
         game = new CheckersGame();
-        game.start(activeUser, inactiveUser);
+        game.start(activeUser, inactiveUser, Game.StartType.REGULAR);
     }
 
     @org.junit.jupiter.api.Test
     void start() {
-        setUp();
         Piece.Color expectedColor;
         for (int row = 0; row < 8; row++) {
             for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
@@ -37,12 +29,10 @@ class CheckersGameTest {
                 Assertions.assertEquals(game.getBoard().getPiece(new Location(row, col)).getColor(), expectedColor);
             }
         }
-
     }
 
     @org.junit.jupiter.api.Test
     void listPossibleMovesWithSingleCapture() {
-        setUp();
         Map<Piece, List<Move>> currMapp;
         game.makeMove(activeUser, new Move(new Location(5, 6), new Location(4, 7), null));
         game.makeMove(activeUser, new Move(new Location(4, 7), new Location(3, 6), null));
@@ -58,8 +48,6 @@ class CheckersGameTest {
 
     @org.junit.jupiter.api.Test
     void listPossibleMovesWithMultipleCapture() {
-        setUp();
-
         Map<Piece, List<Move>> currMapp;
         game.makeMove(activeUser, new Move(new Location(5, 6), new Location(4, 7), null));
         game.makeMove(activeUser, new Move(new Location(4, 7), new Location(3, 6), null));
@@ -75,8 +63,6 @@ class CheckersGameTest {
 
     @org.junit.jupiter.api.Test
     void makeMove() {
-        setUp();
-
         Piece sourcePiece = game.getBoard().getPiece(new Location(2, 1));
         game.makeMove(activeUser, new Move(new Location(2, 1), new Location(3, 1), null));
         Assertions.assertNull(game.getBoard().getPiece(new Location(2, 1)));
@@ -86,8 +72,6 @@ class CheckersGameTest {
 
     @org.junit.jupiter.api.Test
     void doesWhiteHaveMoves() {
-        setUp();
-
         Map<Piece, List<Move>> currMapp;
         currMapp = game.listPossibleMoves();
         Assertions.assertTrue(game.doesWhiteHaveMoves(currMapp));
@@ -110,7 +94,6 @@ class CheckersGameTest {
 
     @org.junit.jupiter.api.Test
     void getWinner() {
-        setUp();
         activeUser.scoreForGame(CheckersGame.class);
         inactiveUser.scoreForGame(CheckersGame.class);
         doesWhiteHaveMoves();

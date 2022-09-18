@@ -1,5 +1,6 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,12 @@ public interface Game {
 
     String NAME = null;
     String getName();
+
+    enum StartType {
+        REGULAR,
+        TEST1,
+        TEST2
+    }
 
     enum Status {
         IN_PROGRESS,
@@ -26,7 +33,9 @@ public interface Game {
     Status status = Status.IN_PROGRESS;
     User winner = null;
 
-    void start(@NotNull User user1, @NotNull User user2);
+    void start(@NotNull User user1, @NotNull User user2, StartType startType);
+    void presetEndGame(@NotNull User user1, @NotNull User user2);
+    void presetKing(@NotNull User user1, @NotNull User user2);
 
     User getActiveUser(); // Whose turn is it?
     User getBlackUser();
@@ -58,6 +67,26 @@ public interface Game {
 
     public Board getBoard();
 
-    public void PrintBoard();
+    default User userThatPlays(Piece.Color color) {
+        if(color == Piece.Color.WHITE) {
+            return getWhiteUser();
+        } else {
+            return getBlackUser();
+        }
+    }
+
+    default boolean pieceBelongsToUser(@NotNull Piece piece, @NotNull User user) {
+        return userThatPlays(piece.getColor()).equals(user);
+    }
+
+    default boolean userCanMovePiece(@NotNull User user, @Nullable Piece piece) {
+        if(piece == null) {
+            return false;
+        }
+        if(!getActiveUser().equals(user)) {
+            return false;
+        }
+        return pieceBelongsToUser(piece, user);
+    }
 
 }

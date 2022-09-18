@@ -1,23 +1,30 @@
 td {
-
-padding: 0.5em;
-border: 1px solid gray;
-width:25px;height: 25px;
-
+    padding: 0.5em;
+    border: 2px solid gray;
+    width: 25px;
+    height: 25px;
 }
 
 .WHITE-background {
-
-background-color: white;
-color: black;
-
+    background-color: white;
+    color: black;
 }
 
 .BLACK-background {
+    background-color: black;
+    color: white;
+}
 
-background-color: black;
-color: white;
+.has-moves {
+    border-color: greenyellow;
+}
 
+.is-move-target {
+    border-color: darkorange;
+}
+
+.is-selected {
+    border: 2px dotted greenyellow;
 }
 
 .score{
@@ -28,4 +35,6 @@ font-size: 30px;
   text-align: center;
 }
 
-
+#board a {
+    color: white;
+}
