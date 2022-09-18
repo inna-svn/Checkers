@@ -12,6 +12,12 @@ public interface Game {
     String NAME = null;
     String getName();
 
+    enum StartType {
+        REGULAR,
+        TEST1,
+        TEST2
+    }
+
     enum Status {
         IN_PROGRESS,
         FINISHED
@@ -27,7 +33,7 @@ public interface Game {
     Status status = Status.IN_PROGRESS;
     User winner = null;
 
-    void start(@NotNull User user1, @NotNull User user2);
+    void start(@NotNull User user1, @NotNull User user2, StartType startType);
     void presetEndGame(@NotNull User user1, @NotNull User user2);
     void presetKing(@NotNull User user1, @NotNull User user2);
 
@@ -60,8 +66,6 @@ public interface Game {
     }
 
     public Board getBoard();
-
-    public void PrintBoard();
 
     default User userThatPlays(Piece.Color color) {
         if(color == Piece.Color.WHITE) {

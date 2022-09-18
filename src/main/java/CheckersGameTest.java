@@ -23,7 +23,7 @@ class CheckersGameTest {
             throw new RuntimeException(e);
         }
         game = new CheckersGame();
-        game.start(activeUser, inactiveUser);
+        game.start(activeUser, inactiveUser, Game.StartType.REGULAR);
     }
 
     @org.junit.jupiter.api.Test

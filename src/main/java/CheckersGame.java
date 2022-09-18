@@ -1,6 +1,5 @@
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ public class CheckersGame implements Game {
     }
 
     @Override
-    public void start(@NotNull User user1, @NotNull User user2) {
+    public void start(@NotNull User user1, @NotNull User user2, StartType startType) {
         activeUser = user1;
         inactiveUser = user2;
         whiteUser = activeUser;
@@ -45,88 +44,36 @@ public class CheckersGame implements Game {
                 Location currLocation = new Location(row, col);
                 board.setPiece(currLocation, new CheckersPiece(board, currColor, currLocation));
             }
+        }
+
+        switch (startType) {
+            case TEST1: presetKing(user1, user2);
+            case TEST2: presetEndGame(user1, user1);
         }
     }
 
 
     public void presetEndGame(@NotNull User user1, @NotNull User user2){
-        activeUser = user1;
-        inactiveUser = user2;
-        whiteUser = activeUser;
-        blackUser = inactiveUser;
-
-        // Default game pieces
-        Piece.Color currColor = Piece.Color.WHITE;
-
-        // Initialize board with game pieces
-        for (int row = 0; row < 8; row++) {
-            // For rows 0,1,2 color is white, skip row 3-4, then use color 5
-            if (row == 3) {
-                row = 5;
-                currColor = Piece.Color.BLACK;
-            }
-            // Go over cols and place soldiers
-            for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
-                // Place a soldier at current location with the right color
-                Location currLocation = new Location(row, col);
-                board.setPiece(currLocation, new CheckersPiece(board, currColor, currLocation));
-            }
-        }
-        Map<Piece, List<Move>> currMapp;
-        currMapp = listPossibleMoves();
-        Assertions.assertTrue(doesWhiteHaveMoves(currMapp));
-
         //remove all white soldiers expect 2,7
         for (int row = 0; row < 3; row++) {
             for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
                 if (col != 7 || row != 2) getBoard().removePiece(new Location(row, col));
             }
         }
-        currMapp = listPossibleMoves();
-        Assertions.assertTrue(doesWhiteHaveMoves(currMapp));
-
         //move black soldiers in order to block the white soldier
         makeMove(activeUser, new Move(new Location(7, 0), new Location(3, 6), null));
         makeMove(activeUser, new Move(new Location(7, 2), new Location(4, 5), null));
         makeMove(activeUser, new Move(new Location(3, 6), new Location(2, 5), null));
         makeMove(activeUser, new Move(new Location(2, 7), new Location(3, 6), null));
-
     }
+
     public void presetKing(@NotNull User user1, @NotNull User user2){
-        activeUser = user1;
-        inactiveUser = user2;
-        whiteUser = activeUser;
-        blackUser = inactiveUser;
-
-        // Default game pieces
-        Piece.Color currColor = Piece.Color.WHITE;
-
-        // Initialize board with game pieces
-        for (int row = 0; row < 8; row++) {
-            // For rows 0,1,2 color is white, skip row 3-4, then use color 5
-            if (row == 3) {
-                row = 5;
-                currColor = Piece.Color.BLACK;
-            }
-            // Go over cols and place soldiers
-            for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
-                // Place a soldier at current location with the right color
-                Location currLocation = new Location(row, col);
-                board.setPiece(currLocation, new CheckersPiece(board, currColor, currLocation));
-            }
-        }
-        Map<Piece, List<Move>> currMapp;
-        currMapp = listPossibleMoves();
-        Assertions.assertTrue(doesWhiteHaveMoves(currMapp));
-
         //remove all white soldiers expect 2,7
         for (int row = 0; row < 3; row++) {
             for (int col = ((row % 2) == 0) ? 1 : 0; col < 8; col = col + 2) {
                 if (! ((col == 7 && row == 2) || (col == 2 && row == 1))) getBoard().removePiece(new Location(row, col));
             }
         }
-        currMapp = listPossibleMoves();
-        Assertions.assertTrue(doesWhiteHaveMoves(currMapp));
 
         //move black soldiers in order to block the white soldier
         makeMove(activeUser, new Move(new Location(7, 0), new Location(3, 6), null));
@@ -136,8 +83,6 @@ public class CheckersGame implements Game {
         makeMove(activeUser, new Move(new Location(7, 4), new Location(3, 2), null));
         makeMove(activeUser, new Move(new Location(2, 5), new Location(1, 6), null));
         makeMove(activeUser, new Move(new Location(3, 6), new Location(4, 7), null));
-
-
     }
 
     @Override
@@ -223,29 +168,6 @@ public class CheckersGame implements Game {
         return this.board;
     }
 
-    public void PrintBoard() {
-        for (int row = 0; row < 8; row++) {
-            System.out.println("\n----------------");
-            System.out.print("|");
-            for (int col = 0; col < 8; col++) {
-                Piece currPiece = this.board.getPiece(new Location(row, col));
-                // Check if current location is a game piece
-                if (currPiece != null) {
-                    if (currPiece.getColor() == Piece.Color.BLACK) {
-                        System.out.print("B");
-                    } else {
-                        System.out.print("W");
-                    }
-                } else {
-                    System.out.print(" ");
-                }
-                System.out.print("|");
-            }
-        }
-
-        System.out.println("");
-    }
-
     Stream<Piece> allPieces() {
         return Location.stream().map(location -> this.board.getPiece(location)).filter(Objects::nonNull);
     }
@@ -263,10 +185,8 @@ public class CheckersGame implements Game {
 
         Map<Piece, List<Move>> currMapp = listPossibleMoves();
         if (!doesBlackHavePieces || !doesBlackHaveMoves(currMapp)) {
-            Status status = Status.FINISHED;
             return whiteUser;
         } else if (!doesWhiteHavePieces || !doesWhiteHaveMoves(currMapp)) {
-            Status status = Status.FINISHED;
             return blackUser;
         }
         return null;

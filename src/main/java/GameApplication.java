@@ -6,8 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @ApplicationScoped
 @ManagedBean
@@ -15,7 +13,7 @@ import java.util.Map;
 public class GameApplication {
 
     // Very not sure
-    public Game startGame(@NotNull Lobby lobby,boolean endPreset,boolean kingPreset) {
+    public Game startGame(@NotNull Lobby lobby, Game.StartType startType) {
         Preconditions.checkState(lobby.canStartGame());
         var users = lobby.startGame();
         users.forEach(u -> u.partLobby(lobby));
@@ -27,25 +25,9 @@ public class GameApplication {
             throw new RuntimeException(e);
         }
         var userList = new ArrayList<>(users); // Note: unknown order
-        if (endPreset)
-            game.presetEndGame(userList.get(0), userList.get(1));
-        else if (kingPreset)
-            game.presetKing(userList.get(0), userList.get(1));
-        else
-            game.start(userList.get(0), userList.get(1));
+        game.start(userList.get(0), userList.get(1), startType);
 
         return game;
-    }
-
-    Map<Piece, List<Move>> listPossibleMoves(User user, Game game) {
-        Preconditions.checkState(game.getActiveUser() == user);
-        return game.listPossibleMoves();
-    }
-
-    /**
-     * The user picked a move in the UI
-     */
-    void move(User user, Game game, Move move) {
     }
 
 }
