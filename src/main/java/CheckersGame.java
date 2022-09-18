@@ -48,6 +48,7 @@ public class CheckersGame implements Game {
 
         switch (startType) {
             case TEST1: presetKing(user1, user2);
+                break;
             case TEST2: presetEndGame(user1, user1);
         }
     }
