@@ -56,7 +56,7 @@ public class UserSession implements Serializable {
         return user.getLobby();
     }
 
-    void signUp() {
+    public void signUp() {
         try {
 
             user = User.signUp(username, password);
