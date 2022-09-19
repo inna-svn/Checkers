@@ -56,12 +56,13 @@ public class UserSession implements Serializable {
         return user.getLobby();
     }
 
-    void signUp() {
+    public String signUp() {
         try {
 
             user = User.signUp(username, password);
 
             errorMessage = null;
+            return "home.html?faces-redirect=true";
 
         } catch (User.SignUpError e) {
             errorMessage = e.getMessage();
@@ -70,6 +71,7 @@ public class UserSession implements Serializable {
         // TODO: Check if any lobby has enough players to start
         //       The lobby where u joined might be ready.
         //       Then startGame()
+        return null;
     }
 
     public String signIn() {
