@@ -125,8 +125,10 @@ public class CheckersGame extends Game {
     @Override
     public void makeMove(@NotNull User user, @NotNull Move move) {
         // Set piece to end goal
-        this.board.setPiece(move.end(), this.board.getPiece(move.start()));
-
+        if (this.board.getPiece(move.start()).getResourceName() == "King")
+            this.board.setKingPiece(move.end(), this.board.getPiece(move.start()));
+        else
+            this.board.setPiece(move.end(), this.board.getPiece(move.start()));
         // Remove all relevant pieces
         this.board.removePiece(move.start());
         if (move.intermediates() != null) {
