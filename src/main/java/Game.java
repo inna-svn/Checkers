@@ -1,4 +1,3 @@
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,10 +6,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public interface Game {
+public abstract class Game {
 
     String NAME = null;
-    String getName();
+    protected Board board = new Board();
+    protected User winner, loser;
+
+    public String getName() {
+        return NAME;
+    }
 
     enum StartType {
         REGULAR,
@@ -31,31 +35,35 @@ public interface Game {
     }
 
     Status status = Status.IN_PROGRESS;
-    User winner = null;
 
-    void start(@NotNull User user1, @NotNull User user2, StartType startType);
-    void presetEndGame(@NotNull User user1, @NotNull User user2);
-    void presetKing(@NotNull User user1, @NotNull User user2);
+    abstract void start(@NotNull User user1, @NotNull User user2, StartType startType);
+    abstract void presetEndGame(@NotNull User user1, @NotNull User user2);
+    abstract void presetKing(@NotNull User user1, @NotNull User user2);
 
-    User getActiveUser(); // Whose turn is it?
-    User getBlackUser();
-    User getWhiteUser();
+    abstract User getActiveUser(); // Whose turn is it?
+    abstract User getBlackUser();
+    abstract User getWhiteUser();
 
-    default void abandon(User user) {
-        // TODO
+    void abandon(User user) {
+        status = Status.FINISHED;
     }
 
-    Map<Piece, List<Move>> listPossibleMoves();
+    abstract Map<Piece, List<Move>> listPossibleMoves();
 
-    void makeMove(@NotNull User user, @NotNull Move move);
+    abstract void makeMove(@NotNull User user, @NotNull Move move);
 
-    default Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    default User getWinner() {
-        Preconditions.checkState(status == Status.FINISHED, "getWinner() should only be called on IN_PROGRESS Game");
+    abstract void processPossibleGameEnd();
+
+    public User getWinner() {
         return winner;
+    }
+
+    public User getLoser() {
+        return loser;
     }
 
     static List<Class<? extends Game>> allGamesClasses() {
@@ -65,9 +73,11 @@ public interface Game {
         ));
     }
 
-    public Board getBoard();
+    public Board getBoard() {
+        return this.board;
+    }
 
-    default User userThatPlays(Piece.Color color) {
+    public User userThatPlays(Piece.Color color) {
         if(color == Piece.Color.WHITE) {
             return getWhiteUser();
         } else {
@@ -75,11 +85,11 @@ public interface Game {
         }
     }
 
-    default boolean pieceBelongsToUser(@NotNull Piece piece, @NotNull User user) {
+    public boolean pieceBelongsToUser(@NotNull Piece piece, @NotNull User user) {
         return userThatPlays(piece.getColor()).equals(user);
     }
 
-    default boolean userCanMovePiece(@NotNull User user, @Nullable Piece piece) {
+    public boolean userCanMovePiece(@NotNull User user, @Nullable Piece piece) {
         if(piece == null) {
             return false;
         }

@@ -5,7 +5,6 @@ import java.util.*;
 
 public class User {
     Map<Class<? extends Game>, UserGameScore> scores = new HashMap<>(); // TODO: Load from DB?
-    Game activeGame = null;
     Set<Lobby> lobbies = new HashSet<>();
     private int id;
     private final String username;
@@ -70,16 +69,8 @@ public class User {
         lobbies.remove(lobby);
     }
 
-    void abandonActiveGame() {
-        if (activeGame != null) {
-            activeGame.abandon(this);
-            activeGame = null;
-        }
-    }
-
     void signOut() {
         lobbies.forEach((lobby) -> lobby.removeUser(this));
-        abandonActiveGame();
     }
 
     UserGameScore scoreForGame(Class<? extends Game> gameClass) {
