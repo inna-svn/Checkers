@@ -3,22 +3,34 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>
         <ui:insert name="title">Sign In - Checkers</ui:insert>
     </title>
+    <link rel="stylesheet" href="main.css"/>
 </h:head>
 <h:body>
     <h:form id="signin" rendered="#{!userSession.signedIn}">
+        <div class="center">
+            <div class="arial">
+                Create a New Account <br></br>
+                <div class="txt"> Let's set up your account .Already have one ?
+                    <h:link outcome="signin.xhtml">Sign in here</h:link>
+                    <br></br>
+                </div>
+            </div>
+            <br></br>
+        </div>
         <h:panelGrid columns="2">
             <h:outputLabel for="username">Username:</h:outputLabel>
             <h:inputText id="username" value="#{userSession.username}"/>
             <h:outputLabel for="password">Password:</h:outputLabel>
             <h:inputSecret id="password" value="#{userSession.password}"/>
         </h:panelGrid>
-        <h:commandButton value="Sign Up" action="#{userSession.signUp}"/>
+        <p:commandButton value="Sign Up" styleClass="rounded-button" action="#{userSession.signUp}"/>
     </h:form>
     <h:outputText id="message" rendered="#{userSession.errorMessage != null}">#{userSession.errorMessage}</h:outputText>
     <h:outputText rendered="#{userSession.signedIn}">

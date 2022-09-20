@@ -21,28 +21,28 @@
     <div class="center">
 
 
-
         <ui:repeat value="#{userSession.availableLobbies}" var="lobby">
 
-                <h:form>
-                    <img src="Images/score_#{lobby.getGameName()}.jpg" alt="myscore"/>
-                    <br/>
-                    <div class="score">
-                    <h:outputText id="winNum" value="Wins number: #{userSession.scoreForGame(lobby.gameClass).getWinsNum()}"/>
+            <h:form>
+                <img src="Images/score_#{lobby.getGameName()}.jpg" alt="myscore"/>
+                <br/>
+                <div class="txt">
+                    <h:outputText id="winNum"
+                                  value="Wins number: #{userSession.scoreForGame(lobby.gameClass).getWinsNum()}"/>
                     <br/>
 
-                    <h:outputText id="gameNum" value="Games number: #{userSession.scoreForGame(lobby.gameClass).getGamesNum()}"/>
+                    <h:outputText id="gameNum"
+                                  value="Games number: #{userSession.scoreForGame(lobby.gameClass).getGamesNum()}"/>
                     <br/>
 
                     <h:outputText id="rate" value="Rate : #{userSession.scoreForGame(lobby.gameClass).getRate()}"/>
-                    </div>
-                </h:form>
+                </div>
+            </h:form>
 
         </ui:repeat>
 
 
     </div>
-
 
 
     <!--
