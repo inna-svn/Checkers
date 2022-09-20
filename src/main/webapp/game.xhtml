@@ -27,7 +27,7 @@
                     <ui:repeat value="#{gameEndpoint.getBoardState(userSession.user)}" var="row">
                         <tr>
                             <ui:repeat value="#{row}" var="bl">
-                                <td stylesheet="a"
+                                <td
                                     class="#{bl.location.color}-background has-#{not bl.getHasMoves() ? 'no-' : ''}moves is-#{bl.isMoveTarget ? '' : 'not-'}move-target is-#{bl.isSelected ? '' : 'not-'}selected"
                                     title="#{bl.location}">
                                     <h:outputText rendered="#{bl.piece != null}">
