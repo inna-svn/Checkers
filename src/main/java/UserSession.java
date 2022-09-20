@@ -1,5 +1,7 @@
 import jakarta.annotation.ManagedBean;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -60,13 +62,11 @@ public class UserSession implements Serializable {
         try {
 
             user = User.signUp(username, password);
-
-            errorMessage = null;
             return "home.html?faces-redirect=true";
 
         } catch (User.SignUpError e) {
-            errorMessage = e.getMessage();
-
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(e.getMessage()));
         }
         // TODO: Check if any lobby has enough players to start
         //       The lobby where u joined might be ready.
@@ -80,16 +80,14 @@ public class UserSession implements Serializable {
         // TODO: Check if any lobby has enough players to start
         //       The lobby where u joined might be ready.
         //       Then startGame()
-        errorMessage = null;
-
         try {
 
             user = User.signIn(username, password);
 
             return "home.html?faces-redirect=true";
         } catch (User.SignInError e) {
-            errorMessage = e.getMessage();
-        }
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(e.getMessage()));        }
         return null;
     }
 

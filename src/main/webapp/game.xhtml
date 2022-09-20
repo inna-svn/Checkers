@@ -4,6 +4,7 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 >
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
@@ -62,10 +63,10 @@
                 Game Over<br/>
 
                 <h:outputText rendered="#{gameEndpoint.game.winner == userSession.user}">
-                    You win!
+                    <p:staticMessage severity="info" summary="GAME OVER" detail="You Win :)" style="width: 100%"/>
                 </h:outputText>
                 <h:outputText rendered="#{gameEndpoint.game.loser == userSession.user}">
-                    You lose :(
+                    <p:staticMessage severity="error" summary="GAME OVER" detail="You lose :(" style="width: 100%"/>
                 </h:outputText>
                 <h:outputText rendered="#{gameEndpoint.game.winner == null}">
                     The game was abandoned

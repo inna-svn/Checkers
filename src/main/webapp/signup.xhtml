@@ -30,9 +30,9 @@
             <h:outputLabel for="password">Password:</h:outputLabel>
             <h:inputSecret id="password" value="#{userSession.password}"/>
         </h:panelGrid>
-        <p:commandButton value="Sign Up" styleClass="rounded-button" action="#{userSession.signUp}"/>
+        <p:commandButton value="Sign Up" styleClass="rounded-button" update="@form" action="#{userSession.signUp}"/>
+        <p:messages id="msgs"/>
     </h:form>
-    <h:outputText id="message" rendered="#{userSession.errorMessage != null}">#{userSession.errorMessage}</h:outputText>
     <h:outputText rendered="#{userSession.signedIn}">
         You are logged in, please proceed to
         <h:link outcome="index.html">the main page</h:link>
