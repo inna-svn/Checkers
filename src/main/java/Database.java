@@ -16,7 +16,7 @@ public class Database {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            connection = DriverManager.getConnection(url, "root", "zubur1");
+            connection = DriverManager.getConnection(url, "root", "");
             connection.setAutoCommit(true);
             statement = connection.createStatement();
         } catch (SQLException sqlException) {
