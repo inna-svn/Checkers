@@ -7,28 +7,40 @@
 >
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <title><ui:insert name="title">Checkers</ui:insert></title>
+    <title>
+        <ui:insert name="title">Checkers</ui:insert>
+    </title>
 </h:head>
 <h:body>
     You are logged in, #{userSession.username}<br/>
     <h:form id="signout">
-        <h:commandButton value="Sign Out" action="#{userSession.signOut}"/>
+        <p:commandButton value="Sign Out" action="#{userSession.signOut}"/>
     </h:form>
-    <h:link outcome="scores.xhtml">Scores</h:link>
+    <p:tabView>
+        <p:tab title="Scores">
+            <p:link outcome="scores.xhtml">My scores</p:link>
+        </p:tab>
 
-    <br/>
-    <h2>Join one of the Lobbies</h2>
-        <ui:repeat value="#{userSession.availableLobbies}" var="lobby">
 
-            <h3>#{lobby.gameName} - #{lobby.users.size()} user(s)</h3>
+        <br/>
+        <p:tab title="Select Game to Play">
+            <!--<h2>Join one of the Lobbies</h2>-->
+            <ui:repeat value="#{userSession.availableLobbies}" var="lobby">
+
+                <h3>#{lobby.gameName} - #{lobby.users.size()} user(s)</h3>
+
                 <h:form>
-                    <h:commandButton value="Regular Game" action="#{userSession.joinLobby(lobby, 'REGULAR')}"/>
+                    <p:commandButton value="Regular Game" action="#{userSession.joinLobby(lobby, 'REGULAR')}"/>
                     <br/><br/>
-                    <h:commandButton value="Preset KING State For Test" action="#{userSession.joinLobby(lobby, 'TEST1')}"/>
+                    <p:commandButton value="Preset KING State For Test"
+                                     action="#{userSession.joinLobby(lobby, 'TEST1')}"/>
                     <br/><br/>
-                    <h:commandButton value="Preset END-GAME For Test" action="#{userSession.joinLobby(lobby,'TEST2')}"/>
+                    <p:commandButton value="Preset END-GAME For Test" action="#{userSession.joinLobby(lobby,'TEST2')}"/>
                 </h:form>
-        </ui:repeat>
+
+            </ui:repeat>
+        </p:tab>
+    </p:tabView>
     <!--    <h:link outcome="lobby.html"></h:link>-->
 </h:body>
 </html>

@@ -3,15 +3,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
 >
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <title><ui:insert name="title">Checkers</ui:insert></title>
+    <title>
+        <ui:insert name="title">Checkers</ui:insert>
+    </title>
+    <link rel="stylesheet" href="main.css"/>
 </h:head>
 <h:body>
-    Welcome to Checkers!
+    <div class="txt">
+        Welcome to IMI Web Server !
+    </div>
+    <br></br><br></br>
     <h:outputText rendered="#{!userSession.signedIn}">
-        <h:link outcome="signin.xhtml">Please sign in</h:link>
+        <p:tabView>
+            <p:tab title="About US">
+                We are students in the open university
+            </p:tab>
+            <p:tab title="Login">
+                <p:link outcome="signin.xhtml">Click to sign in</p:link>
+                <br></br>
+            </p:tab>
+            <p:tab title="Register">
+                <p:link outcome="signup.xhtml">Click to sign up</p:link>
+            </p:tab>
+        </p:tabView>
+
+
     </h:outputText>
     <h:outputText rendered="#{userSession.signedIn}">
         You are logged in, #{userSession.username}<br/>

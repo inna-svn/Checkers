@@ -5,6 +5,11 @@ td {
     height: 45px;
 }
 
+.sign td {
+      padding: 0.5em;
+       width: 45px;
+       height: 45px;
+}
 .WHITE-background {
     background-color: white;
     color: black;
@@ -27,8 +32,8 @@ td {
     border: 2px dotted greenyellow;
 }
 
-.score{
-font-size: 30px;
+.txt{
+font-size: 20px;
 }
 
 .center {
@@ -37,4 +42,9 @@ font-size: 30px;
 
 #board a {
     color: white;
+}
+
+.arial {
+font-family: Arial;
+font-size:30px;
 }

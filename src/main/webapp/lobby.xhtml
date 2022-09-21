@@ -4,29 +4,42 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+
 >
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <title><ui:insert name="title">Checkers</ui:insert></title>
+    <title>
+        <ui:insert name="title">Checkers</ui:insert>
+    </title>
+    <link rel="stylesheet" href="main.css"/>
+
 </h:head>
 <h:body>
     You are logged in, #{userSession.username}<br/>
     <h:form id="signout">
-        <h:commandButton value="Sign Out" action="#{userSession.signOut}"/>
+        <p:commandButton value="Sign Out" action="#{userSession.signOut}"/>
     </h:form>
     <!-- TODO: display appropriate message of not in lobby (userSession.lobby == null) -->
     <!-- TODO: only display if in lobby (userSession.lobby != null) -->
-    <h1>Lobby - #{userSession.lobby.gameName}</h1>
 
-    <h:link outcome="home.xhtml">Home</h:link>
+    <p:tabView>
+        <p:tab title="Home">
+            <p:link outcome="home.xhtml">Home Page</p:link>
+            <br></br><br></br>
+        </p:tab>
+    </p:tabView>
+    <div class="arial">Lobby - #{userSession.lobby.gameName}
 
-    <h2>Users in the lobby</h2>
+        Users in the lobby
+    </div>
 
     <h:panelGroup id="list">
         <ul>
             <ui:repeat value="#{userSession.lobby.users}" var="user">
                 <li>
-                    #{user.username} <h:outputText rendered="#{user == userSession.user}">(you)</h:outputText>
+                    #{user.username}
+                    <h:outputText rendered="#{user == userSession.user}">(you)</h:outputText>
                 </li>
             </ui:repeat>
         </ul>
@@ -39,11 +52,11 @@
     <!-- https://javaee.github.io/javaee-spec/javadocs/javax/faces/push/Push.html -->
     <!-- TOOD: By game ID and user ID, not game name and user name -->
     <!-- Warning: ajax tag does not work -->
-    <f:websocket channel="lobby" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage" />
+    <f:websocket channel="lobby" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage"/>
 
 
     <h:form>
-        <h:commandScript name="renderList" render=":list" />
+        <h:commandScript name="renderList" render=":list"/>
     </h:form>
 
     <script>
@@ -58,6 +71,7 @@
         function startGame(url) {
             window.location.href = url;
         }
+
     </script>
 
 

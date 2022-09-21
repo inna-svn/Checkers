@@ -4,10 +4,13 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
->
+      xmlns:p="http://primefaces.org/ui">
+
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <title><ui:insert name="title">Checkers</ui:insert></title>
+    <title>
+        <ui:insert name="title">Checkers</ui:insert>
+    </title>
     <!-- Does not work. To fix.  -->
     <link rel="stylesheet" href="main.css"/>
 
@@ -21,47 +24,49 @@
     <h:form id="board">
         <f:ajax execute="@form" render="@form">
             <h:outputText rendered="#{gameEndpoint.game.status.toString() == 'IN_PROGRESS'}">
-            <table>
-                <ui:repeat value="#{gameEndpoint.getBoardState(userSession.user)}" var="row">
-                    <tr>
-                        <ui:repeat value="#{row}" var="bl">
-                            <td class="#{bl.location.color}-background has-#{not bl.getHasMoves() ? 'no-' : ''}moves is-#{bl.isMoveTarget ? '' : 'not-'}move-target is-#{bl.isSelected ? '' : 'not-'}selected"
-                                title="#{bl.location}">
-                                <h:outputText rendered="#{bl.piece != null}">
-                                    <h:outputText rendered="#{not bl.getHasMoves()}">
+                <table>
+                    <ui:repeat value="#{gameEndpoint.getBoardState(userSession.user)}" var="row">
+                        <tr>
+                            <ui:repeat value="#{row}" var="bl">
+                                <td
+                                    class="#{bl.location.color}-background has-#{not bl.getHasMoves() ? 'no-' : ''}moves is-#{bl.isMoveTarget ? '' : 'not-'}move-target is-#{bl.isSelected ? '' : 'not-'}selected"
+                                    title="#{bl.location}">
+                                    <h:outputText rendered="#{bl.piece != null}">
+                                        <h:outputText rendered="#{not bl.getHasMoves()}">
                                             <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece#{bl.piece.resourceName}.jpg"
                                                  alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
+                                        </h:outputText>
+                                        <h:outputText rendered="#{bl.getHasMoves()}">
+                                            <h:commandLink
+                                                    actionListener="#{gameEndpoint.selectPiece(userSession.user, bl.piece)}">
+                                                <f:param name="id"
+                                                         value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
+                                                <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece#{bl.piece.resourceName}.jpg"
+                                                     alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
+                                            </h:commandLink>
+                                        </h:outputText>
                                     </h:outputText>
-                                    <h:outputText rendered="#{bl.getHasMoves()}">
+                                    <h:outputText rendered="#{bl.isMoveTarget}">
                                         <h:commandLink
-                                                actionListener="#{gameEndpoint.selectPiece(userSession.user, bl.piece)}">
+                                                actionListener="#{gameEndpoint.makeMove(userSession.user, bl.location)}">
                                             <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
-                                            <img src="Images/#{bl.piece.color.toString().toLowerCase()}Piece#{bl.piece.resourceName}.jpg"
-                                                 alt="#{bl.piece.color.toString().toLowerCase()} piece"/>
+                                            GO
                                         </h:commandLink>
                                     </h:outputText>
-                                </h:outputText>
-                                <h:outputText rendered="#{bl.isMoveTarget}">
-                                    <h:commandLink
-                                            actionListener="#{gameEndpoint.makeMove(userSession.user, bl.location)}">
-                                        <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
-                                        GO
-                                    </h:commandLink>
-                                </h:outputText>
-                            </td>
-                        </ui:repeat>
-                    </tr>
-                </ui:repeat>
-            </table>
+                                </td>
+                            </ui:repeat>
+                        </tr>
+                    </ui:repeat>
+                </table>
             </h:outputText>
             <h:outputText rendered="#{gameEndpoint.game.status.toString() == 'FINISHED'}">
                 Game Over<br/>
 
                 <h:outputText rendered="#{gameEndpoint.game.winner == userSession.user}">
-                    You win!
+                    <p:staticMessage severity="info" summary="GAME OVER" detail="You Win :)" style="width: 100%"/>
                 </h:outputText>
                 <h:outputText rendered="#{gameEndpoint.game.loser == userSession.user}">
-                    You lose :(
+                    <p:staticMessage severity="error" summary="GAME OVER" detail="You lose :(" style="width: 100%"/>
                 </h:outputText>
                 <h:outputText rendered="#{gameEndpoint.game.winner == null}">
                     The game was abandoned
@@ -97,7 +102,7 @@
     <f:websocket channel="game" user="#{userSession.lobby.gameName}_#{userSession.username}" onmessage="onMessage"/>
 
     <h:form>
-        <h:commandScript name="renderBoard" render=":info :board" >
+        <h:commandScript name="renderBoard" render=":info :board">
             <f:param name="id" value="#{gameEndpoint.idForGame(gameEndpoint.game)}"/>
         </h:commandScript>
     </h:form>
@@ -108,6 +113,7 @@
             console.debug('onMessage', message, channel, messageEvent);
             window[message.func](...message.args);
         }
+
     </script>
 
 
