@@ -125,7 +125,7 @@ public class CheckersGame extends Game {
     @Override
     public void makeMove(@NotNull User user, @NotNull Move move) {
         // Set piece to end goal
-        if (this.board.getPiece(move.start()).getResourceName() == "King")
+        if (this.board.getPiece(move.start()) instanceof CheckersKingPiece)
             this.board.setKingPiece(move.end(), this.board.getPiece(move.start()));
         else
             this.board.setPiece(move.end(), this.board.getPiece(move.start()));
