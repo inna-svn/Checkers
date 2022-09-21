@@ -26,12 +26,5 @@ public class Board {
     public void removePiece(@NotNull Location location) {
         Preconditions.checkArgument(board[location.x()][location.y()] != null, "Programming Error. Removing non-existing Piece");
         this.board[location.x()][location.y()] = null;
-
-//        System.out.println("piece "+location+"was removed");
-
-    }
-
-    public void makeMove(@NotNull Move move) {
-
     }
 }
